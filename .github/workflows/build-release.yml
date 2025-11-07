@@ -97,6 +97,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: --max-old-space-size=8192
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd code-oss
           npm ci
@@ -144,6 +145,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: --max-old-space-size=8192
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd code-oss
           npm ci
@@ -190,6 +192,7 @@ jobs:
       - name: Build
         env:
           NODE_OPTIONS: --max-old-space-size=8192
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           cd code-oss
           npm ci
