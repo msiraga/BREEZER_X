@@ -1,0 +1,38 @@
+# BREEZER IDE Builder - Multi-platform
+# Builds BREEZER IDE for all platforms
+
+FROM node:18-bullseye
+
+# Install build dependencies
+RUN apt-get update && apt-get install -y \
+    build-essential \
+    pkg-config \
+    libx11-dev \
+    libxkbfile-dev \
+    libsecret-1-dev \
+    libglib2.0-dev \
+    fakeroot \
+    rpm \
+    dpkg \
+    git \
+    curl \
+    python3 \
+    imagemagick \
+    jq \
+    && rm -rf /var/lib/apt/lists/*
+
+# Install Yarn
+RUN npm install -g yarn
+
+# Set working directory
+WORKDIR /build
+
+# Copy branding files
+COPY ide-build/branding /build/branding
+COPY ide-build/scripts /build/scripts
+
+# Entry point script
+COPY docker/scripts/build-ide.sh /build/build-ide.sh
+RUN chmod +x /build/build-ide.sh /build/scripts/*.sh
+
+ENTRYPOINT ["/build/build-ide.sh"]

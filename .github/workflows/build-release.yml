@@ -1,0 +1,186 @@
+name: Build BREEZER IDE
+
+on:
+  push:
+    branches:
+      - main
+    tags:
+      - 'v*'
+  workflow_dispatch:
+    inputs:
+      version:
+        description: 'Code-OSS version'
+        required: false
+        default: '1.95'
+
+jobs:
+  build-linux:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y build-essential pkg-config libx11-dev libxkbfile-dev libsecret-1-dev imagemagick jq
+      
+      - name: Clone Code-OSS
+        run: |
+          git clone --depth 1 --branch release/${{ github.event.inputs.version || '1.95' }} \
+            https://github.com/microsoft/vscode.git code-oss
+      
+      - name: Apply BREEZER branding
+        run: |
+          chmod +x ide-build/scripts/apply-branding.sh
+          bash ide-build/scripts/apply-branding.sh code-oss
+      
+      - name: Build
+        run: |
+          cd code-oss
+          yarn install --frozen-lockfile
+          yarn compile
+          yarn gulp vscode-linux-x64
+      
+      - name: Package
+        run: |
+          mkdir -p builds
+          cd code-oss/.build/linux
+          tar -czf ../../../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: breezer-ide-linux
+          path: builds/breezer-ide-linux-x64.tar.gz
+
+  build-windows:
+    runs-on: windows-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+      
+      - name: Clone Code-OSS
+        run: |
+          git clone --depth 1 --branch release/${{ github.event.inputs.version || '1.95' }} https://github.com/microsoft/vscode.git code-oss
+      
+      - name: Apply BREEZER branding
+        run: |
+          powershell -ExecutionPolicy Bypass -File ide-build\scripts\apply-branding.ps1 code-oss
+      
+      - name: Build
+        run: |
+          cd code-oss
+          yarn install --frozen-lockfile
+          yarn compile
+          yarn gulp vscode-win32-x64
+      
+      - name: Package
+        run: |
+          New-Item -ItemType Directory -Force -Path builds
+          Compress-Archive -Path code-oss\.build\win32-x64\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: breezer-ide-windows
+          path: builds/breezer-ide-windows-x64.zip
+
+  build-darwin:
+    runs-on: macos-latest
+    
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Install dependencies
+        run: brew install imagemagick jq
+      
+      - name: Clone Code-OSS
+        run: |
+          git clone --depth 1 --branch release/${{ github.event.inputs.version || '1.95' }} \
+            https://github.com/microsoft/vscode.git code-oss
+      
+      - name: Apply BREEZER branding
+        run: |
+          chmod +x ide-build/scripts/apply-branding.sh
+          bash ide-build/scripts/apply-branding.sh code-oss
+      
+      - name: Build
+        run: |
+          cd code-oss
+          yarn install --frozen-lockfile
+          yarn compile
+          yarn gulp vscode-darwin-x64
+      
+      - name: Package
+        run: |
+          mkdir -p builds
+          cd code-oss/.build/darwin
+          tar -czf ../../../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
+      
+      - name: Upload artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: breezer-ide-darwin
+          path: builds/breezer-ide-darwin-x64.tar.gz
+
+  create-release:
+    needs: [build-linux, build-windows, build-darwin]
+    runs-on: ubuntu-latest
+    if: startsWith(github.ref, 'refs/tags/v')  # Only create release on tags
+    
+    steps:
+      - name: Download all artifacts
+        uses: actions/download-artifact@v3
+      
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            breezer-ide-linux/breezer-ide-linux-x64.tar.gz
+            breezer-ide-windows/breezer-ide-windows-x64.zip
+            breezer-ide-darwin/breezer-ide-darwin-x64.tar.gz
+          body: |
+            # BREEZER IDE Release
+            
+            AI-Powered Development Platform by RICHDALE AI
+            
+            ## Downloads
+            
+            - **Linux**: breezer-ide-linux-x64.tar.gz
+            - **Windows**: breezer-ide-windows-x64.zip
+            - **macOS**: breezer-ide-darwin-x64.tar.gz
+            
+            ## Features
+            
+            - 🤖 Multi-agent AI system
+            - 🔒 Privacy-first (no telemetry)
+            - 🐳 Integrated sandbox execution
+            - 🚀 GPU-accelerated semantic search
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

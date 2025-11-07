@@ -1,0 +1,46 @@
+name: Nightly Build
+
+on:
+  schedule:
+    # Run at 2 AM UTC every day
+    - cron: '0 2 * * *'
+  workflow_dispatch:
+
+jobs:
+  build-all-platforms:
+    strategy:
+      matrix:
+        include:
+          - os: ubuntu-latest
+            platform: linux
+          - os: windows-latest
+            platform: windows
+          - os: macos-latest
+            platform: darwin
+    
+    runs-on: ${{ matrix.os }}
+    
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+      
+      - name: Setup Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '18'
+      
+      - name: Build BREEZER IDE
+        run: |
+          # Build script based on platform
+          if [ "${{ matrix.platform }}" == "windows" ]; then
+            pwsh ide-build/scripts/apply-branding.ps1
+          else
+            bash ide-build/scripts/apply-branding.sh
+          fi
+      
+      - name: Upload nightly build
+        uses: actions/upload-artifact@v3
+        with:
+          name: breezer-nightly-${{ matrix.platform }}
+          path: builds/
+          retention-days: 7

@@ -1,0 +1,21 @@
+version: '3.8'
+
+# BREEZER IDE Multi-Platform Build System
+# Builds all platforms: Linux, Windows, and macOS
+
+services:
+  build-all:
+    build:
+      context: ..
+      dockerfile: docker/Dockerfile.ide-builder
+    image: breezer-ide-builder:latest
+    volumes:
+      - ../builds:/output
+      - ide-build-cache:/root/.cache
+    environment:
+      - NODE_OPTIONS=--max_old_space_size=8192
+      - BUILD_ALL=true
+    command: ["all", "1.95", "/output"]
+
+volumes:
+  ide-build-cache:
