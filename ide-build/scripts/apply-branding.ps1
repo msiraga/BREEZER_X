@@ -18,9 +18,17 @@ if (!(Test-Path $CodeOssDir)) {
     exit 1
 }
 
-# 1. Replace product metadata
+# 1. Merge product metadata (preserve original fields)
 Write-Host "📝 Updating product.json..." -ForegroundColor Yellow
-Copy-Item "$BrandingDir\product.json" "$CodeOssDir\product.json" -Force
+$originalProduct = Get-Content "$CodeOssDir\product.json" -Raw | ConvertFrom-Json
+$brandingProduct = Get-Content "$BrandingDir\product.json" -Raw | ConvertFrom-Json
+
+# Merge: branding overrides take precedence
+$brandingProduct.PSObject.Properties | ForEach-Object {
+    $originalProduct | Add-Member -MemberType NoteProperty -Name $_.Name -Value $_.Value -Force
+}
+
+$originalProduct | ConvertTo-Json -Depth 100 | Set-Content "$CodeOssDir\product.json"
 
 # 2. Setup Windows icons
 Write-Host "🪟 Setting up Windows icons..." -ForegroundColor Yellow
