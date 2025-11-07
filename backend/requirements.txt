@@ -10,8 +10,8 @@ langchain==0.1.6
 langchain-openai==0.0.5
 langchain-anthropic==0.1.1
 
-# LLM Router
-litellm==1.29.0
+# LLM Router (using latest version)
+litellm
 
 # Database
 asyncpg==0.29.0
