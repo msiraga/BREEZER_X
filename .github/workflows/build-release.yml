@@ -107,19 +107,32 @@ jobs:
       - name: Package
         run: |
           mkdir -p builds
-          # Find where gulp actually put the output
-          ls -la code-oss/
+          # Debug: Show all possible locations
+          echo "=== Searching for build output ==="
+          ls -la code-oss/ || true
           ls -la code-oss/.build/ || true
-          # Try common locations
+          ls -la code-oss/.build/linux/ || true
+          ls -la code-oss/out-vscode/ || true
+          echo "=== Finding VSCode directories ==="
+          find code-oss -maxdepth 3 -name "*VSCode*" -o -name "*Code*" -type d || true
+          
+          # Try all possible locations
           if [ -d "code-oss/.build/linux/VSCode-linux-x64" ]; then
+            echo "Found in .build/linux/"
             cd code-oss/.build/linux
             tar -czf ../../../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
           elif [ -d "code-oss/VSCode-linux-x64" ]; then
+            echo "Found in root"
             cd code-oss
             tar -czf ../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
+          elif [ -d "code-oss/out-vscode/VSCode-linux-x64" ]; then
+            echo "Found in out-vscode/"
+            cd code-oss/out-vscode
+            tar -czf ../../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
           else
-            echo "ERROR: Cannot find VSCode-linux-x64 directory"
-            find code-oss -name "VSCode-linux-x64" -type d
+            echo "ERROR: Cannot find VSCode-linux-x64 directory anywhere"
+            echo "Full search results:"
+            find code-oss -name "*linux*" -type d
             exit 1
           fi
       
@@ -168,17 +181,29 @@ jobs:
       - name: Package
         run: |
           New-Item -ItemType Directory -Force -Path builds
-          # Find where gulp actually put the output
-          Get-ChildItem code-oss
-          Get-ChildItem code-oss\.build -ErrorAction SilentlyContinue
-          # Try common locations
+          # Debug: Show all possible locations
+          Write-Host "=== Searching for build output ==="
+          Get-ChildItem code-oss | Format-Table
+          Get-ChildItem code-oss\.build -ErrorAction SilentlyContinue | Format-Table
+          Get-ChildItem code-oss\.build\win32-x64 -ErrorAction SilentlyContinue | Format-Table
+          Get-ChildItem code-oss\out-vscode -ErrorAction SilentlyContinue | Format-Table
+          Write-Host "=== Finding VSCode directories ==="
+          Get-ChildItem code-oss -Recurse -Depth 2 -Directory -Filter "*VSCode*" -ErrorAction SilentlyContinue
+          
+          # Try all possible locations
           if (Test-Path "code-oss\.build\win32-x64\VSCode-win32-x64") {
+            Write-Host "Found in .build\win32-x64\"
             Compress-Archive -Path code-oss\.build\win32-x64\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
           } elseif (Test-Path "code-oss\VSCode-win32-x64") {
+            Write-Host "Found in root"
             Compress-Archive -Path code-oss\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
+          } elseif (Test-Path "code-oss\out-vscode\VSCode-win32-x64") {
+            Write-Host "Found in out-vscode\"
+            Compress-Archive -Path code-oss\out-vscode\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
           } else {
-            Write-Error "Cannot find VSCode-win32-x64 directory"
-            Get-ChildItem code-oss -Recurse -Directory -Filter "VSCode-win32-x64"
+            Write-Error "Cannot find VSCode-win32-x64 directory anywhere"
+            Write-Host "Full search results:"
+            Get-ChildItem code-oss -Recurse -Directory -Filter "*win32*"
             exit 1
           }
       
@@ -227,19 +252,32 @@ jobs:
       - name: Package
         run: |
           mkdir -p builds
-          # Find where gulp actually put the output
-          ls -la code-oss/
+          # Debug: Show all possible locations
+          echo "=== Searching for build output ==="
+          ls -la code-oss/ || true
           ls -la code-oss/.build/ || true
-          # Try common locations
+          ls -la code-oss/.build/darwin/ || true
+          ls -la code-oss/out-vscode/ || true
+          echo "=== Finding VSCode directories ==="
+          find code-oss -maxdepth 3 -name "*VSCode*" -o -name "*Code*" -type d || true
+          
+          # Try all possible locations
           if [ -d "code-oss/.build/darwin/VSCode-darwin-x64" ]; then
+            echo "Found in .build/darwin/"
             cd code-oss/.build/darwin
             tar -czf ../../../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
           elif [ -d "code-oss/VSCode-darwin-x64" ]; then
+            echo "Found in root"
             cd code-oss
             tar -czf ../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
+          elif [ -d "code-oss/out-vscode/VSCode-darwin-x64" ]; then
+            echo "Found in out-vscode/"
+            cd code-oss/out-vscode
+            tar -czf ../../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
           else
-            echo "ERROR: Cannot find VSCode-darwin-x64 directory"
-            find code-oss -name "VSCode-darwin-x64" -type d
+            echo "ERROR: Cannot find VSCode-darwin-x64 directory anywhere"
+            echo "Full search results:"
+            find code-oss -name "*darwin*" -type d
             exit 1
           fi
       
