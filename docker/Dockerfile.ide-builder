@@ -21,9 +21,6 @@ RUN apt-get update && apt-get install -y \
     jq \
     && rm -rf /var/lib/apt/lists/*
 
-# Install Yarn
-RUN npm install -g yarn
-
 # Set working directory
 WORKDIR /build
 

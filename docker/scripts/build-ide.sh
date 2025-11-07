@@ -43,17 +43,17 @@ bash /build/scripts/apply-branding.sh $(pwd)
 
 # Install dependencies
 echo "📦 Installing dependencies..."
-yarn install --frozen-lockfile --network-timeout 100000
+npm ci
 
 # Compile
 echo "🔨 Compiling BREEZER IDE..."
-yarn compile
+npm run compile
 
 # Build for platform
 echo "📦 Building for $PLATFORM..."
 case $PLATFORM in
     linux)
-        yarn gulp vscode-linux-x64
+        npm run gulp vscode-linux-x64
         echo "✅ Linux build complete"
         if [ -d ".build/linux/VSCode-linux-x64" ]; then
             mkdir -p "$OUTPUT_DIR"
@@ -63,7 +63,7 @@ case $PLATFORM in
         ;;
     
     windows)
-        yarn gulp vscode-win32-x64
+        npm run gulp vscode-win32-x64
         echo "✅ Windows build complete"
         if [ -d ".build/win32-x64/VSCode-win32-x64" ]; then
             mkdir -p "$OUTPUT_DIR"
@@ -74,7 +74,7 @@ case $PLATFORM in
         ;;
     
     darwin)
-        yarn gulp vscode-darwin-x64
+        npm run gulp vscode-darwin-x64
         echo "✅ macOS build complete"
         if [ -d ".build/darwin/VSCode-darwin-x64" ]; then
             mkdir -p "$OUTPUT_DIR"
