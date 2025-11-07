@@ -107,8 +107,21 @@ jobs:
       - name: Package
         run: |
           mkdir -p builds
-          cd code-oss/.build/linux
-          tar -czf ../../../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
+          # Find where gulp actually put the output
+          ls -la code-oss/
+          ls -la code-oss/.build/ || true
+          # Try common locations
+          if [ -d "code-oss/.build/linux/VSCode-linux-x64" ]; then
+            cd code-oss/.build/linux
+            tar -czf ../../../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
+          elif [ -d "code-oss/VSCode-linux-x64" ]; then
+            cd code-oss
+            tar -czf ../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
+          else
+            echo "ERROR: Cannot find VSCode-linux-x64 directory"
+            find code-oss -name "VSCode-linux-x64" -type d
+            exit 1
+          fi
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -155,7 +168,19 @@ jobs:
       - name: Package
         run: |
           New-Item -ItemType Directory -Force -Path builds
-          Compress-Archive -Path code-oss\.build\win32-x64\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
+          # Find where gulp actually put the output
+          Get-ChildItem code-oss
+          Get-ChildItem code-oss\.build -ErrorAction SilentlyContinue
+          # Try common locations
+          if (Test-Path "code-oss\.build\win32-x64\VSCode-win32-x64") {
+            Compress-Archive -Path code-oss\.build\win32-x64\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
+          } elseif (Test-Path "code-oss\VSCode-win32-x64") {
+            Compress-Archive -Path code-oss\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
+          } else {
+            Write-Error "Cannot find VSCode-win32-x64 directory"
+            Get-ChildItem code-oss -Recurse -Directory -Filter "VSCode-win32-x64"
+            exit 1
+          }
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
@@ -202,8 +227,21 @@ jobs:
       - name: Package
         run: |
           mkdir -p builds
-          cd code-oss/.build/darwin
-          tar -czf ../../../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
+          # Find where gulp actually put the output
+          ls -la code-oss/
+          ls -la code-oss/.build/ || true
+          # Try common locations
+          if [ -d "code-oss/.build/darwin/VSCode-darwin-x64" ]; then
+            cd code-oss/.build/darwin
+            tar -czf ../../../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
+          elif [ -d "code-oss/VSCode-darwin-x64" ]; then
+            cd code-oss
+            tar -czf ../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
+          else
+            echo "ERROR: Cannot find VSCode-darwin-x64 directory"
+            find code-oss -name "VSCode-darwin-x64" -type d
+            exit 1
+          fi
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
