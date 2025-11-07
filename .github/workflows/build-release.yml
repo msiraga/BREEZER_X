@@ -82,7 +82,7 @@ jobs:
       - name: Install dependencies
         run: |
           sudo apt-get update
-          sudo apt-get install -y build-essential pkg-config libx11-dev libxkbfile-dev libsecret-1-dev imagemagick jq
+          sudo apt-get install -y build-essential pkg-config libx11-dev libxkbfile-dev libsecret-1-dev libkrb5-dev imagemagick jq
       
       - name: Clone Code-OSS
         run: |
@@ -95,6 +95,8 @@ jobs:
           bash ide-build/scripts/apply-branding.sh code-oss
       
       - name: Build
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
         run: |
           cd code-oss
           npm ci
@@ -140,6 +142,8 @@ jobs:
           powershell -ExecutionPolicy Bypass -File ide-build\scripts\apply-branding.ps1 code-oss
       
       - name: Build
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
         run: |
           cd code-oss
           npm ci
@@ -184,6 +188,8 @@ jobs:
           bash ide-build/scripts/apply-branding.sh code-oss
       
       - name: Build
+        env:
+          NODE_OPTIONS: --max-old-space-size=8192
         run: |
           cd code-oss
           npm ci

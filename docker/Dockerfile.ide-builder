@@ -10,6 +10,7 @@ RUN apt-get update && apt-get install -y \
     libx11-dev \
     libxkbfile-dev \
     libsecret-1-dev \
+    libkrb5-dev \
     libglib2.0-dev \
     fakeroot \
     rpm \

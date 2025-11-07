@@ -47,6 +47,7 @@ npm ci
 
 # Compile
 echo "🔨 Compiling BREEZER IDE..."
+export NODE_OPTIONS="--max-old-space-size=8192"
 npm run compile
 
 # Build for platform
