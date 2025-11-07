@@ -57,7 +57,7 @@ jobs:
           tar -czf ../../../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
       
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: breezer-ide-linux
           path: builds/breezer-ide-linux-x64.tar.gz
@@ -100,7 +100,7 @@ jobs:
           Compress-Archive -Path code-oss\.build\win32-x64\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
       
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: breezer-ide-windows
           path: builds/breezer-ide-windows-x64.zip
@@ -144,7 +144,7 @@ jobs:
           tar -czf ../../../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
       
       - name: Upload artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: breezer-ide-darwin
           path: builds/breezer-ide-darwin-x64.tar.gz
@@ -156,7 +156,7 @@ jobs:
     
     steps:
       - name: Download all artifacts
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v4
       
       - name: Create Release
         uses: softprops/action-gh-release@v1
