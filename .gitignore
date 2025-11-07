@@ -1,0 +1,164 @@
+# BREEZER .gitignore by RICHDALE AI
+
+# ============================================================================
+# Sensitive Data - NEVER COMMIT
+# ============================================================================
+
+# Environment files with API keys
+.env
+.env.local
+.env.production
+
+# GitHub Personal Access Token
+GITHUB_SETUP.md
+
+# API Keys
+**/secrets/
+**/credentials/
+
+# ============================================================================
+# Build Outputs
+# ============================================================================
+
+# IDE builds
+builds/
+*.zip
+*.tar.gz
+*.dmg
+*.exe
+*.AppImage
+*.deb
+*.rpm
+
+# Code-OSS build artifacts
+code-oss/
+.build/
+out/
+dist/
+
+# ============================================================================
+# Dependencies
+# ============================================================================
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+venv/
+ENV/
+.venv
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+*.egg-info/
+dist/
+build/
+
+# Node.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# ============================================================================
+# IDEs and Editors
+# ============================================================================
+
+# VSCode
+.vscode/
+*.code-workspace
+
+# JetBrains
+.idea/
+*.iml
+
+# Vim
+*.swp
+*.swo
+*~
+
+# Emacs
+*~
+\#*\#
+
+# ============================================================================
+# OS Files
+# ============================================================================
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+*.lnk
+
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon
+._*
+
+# Linux
+*~
+.directory
+
+# ============================================================================
+# Logs and Databases
+# ============================================================================
+
+logs/
+*.log
+*.sqlite
+*.db
+
+# Docker volumes
+postgres_data/
+redis_data/
+qdrant_data/
+embeddings_cache/
+ollama_data/
+
+# ============================================================================
+# Temporary Files
+# ============================================================================
+
+tmp/
+temp/
+*.tmp
+*.bak
+*.cache
+
+# ============================================================================
+# Testing
+# ============================================================================
+
+.coverage
+htmlcov/
+.tox/
+coverage.xml
+*.cover
+
+# ============================================================================
+# BREEZER Specific
+# ============================================================================
+
+# Backend runtime
+backend/.cache/
+backend/logs/
+
+# Extension builds
+extension/out/
+extension/dist/
+
+# Sandbox containers (shouldn't be committed)
+.sandbox/
+
+# Local configuration overrides
+config.local.yaml
+settings.local.json
