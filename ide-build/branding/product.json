@@ -3,54 +3,19 @@
   "nameLong": "BREEZER IDE by RICHDALE AI",
   "applicationName": "breezer-ide",
   "dataFolderName": ".breezer-ide",
-  "serverDataFolderName": ".breezer-server",
   "win32MutexName": "breezeride",
-  "licenseName": "MIT",
-  "licenseUrl": "https://github.com/msiraga/BREEZER_X/blob/main/LICENSE",
-  "serverLicenseName": "MIT",
-  "serverLicenseUrl": "https://github.com/msiraga/BREEZER_X/blob/main/LICENSE",
   "win32DirName": "BREEZER IDE",
   "win32NameVersion": "BREEZER IDE",
   "win32RegValueName": "BreezerIDE",
-  "win32AppId": "{{BreezerIDE}}",
-  "win32x64AppId": "{{BreezerIDEx64}}",
-  "win32arm64AppId": "{{BreezerIDEARM64}}",
-  "win32UserAppId": "{{BreezerIDEUser}}",
-  "win32x64UserAppId": "{{BreezerIDEx64User}}",
-  "win32arm64UserAppId": "{{BreezerIDEARM64User}}",
   "win32AppUserModelId": "RICHDALE.BreezerIDE",
   "win32ShellNameShort": "BREEZER",
   "darwinBundleIdentifier": "ai.richdale.breezer",
   "linuxIconName": "breezer-ide",
   "reportIssueUrl": "https://github.com/msiraga/BREEZER_X/issues",
   "urlProtocol": "breezer",
-  "extensionAllowedBadgeProviders": [
-    "api.breezer.ai",
-    "richdale.ai"
-  ],
-  "extensionAllowedProposedApi": [],
-  "extensionsGallery": {
-    "serviceUrl": "https://marketplace.visualstudio.com/_apis/public/gallery",
-    "cacheUrl": "https://vscode.blob.core.windows.net/gallery/index",
-    "itemUrl": "https://marketplace.visualstudio.com/items",
-    "controlUrl": "",
-    "recommendationsUrl": ""
-  },
   "enableTelemetry": false,
   "enableCrashReporter": false,
-  "aiConfig": {
-    "ariaKey": ""
-  },
   "sendASmile": {
     "enabled": false
-  },
-  "documentationUrl": "https://github.com/msiraga/BREEZER_X/wiki",
-  "introductoryVideosUrl": "https://github.com/msiraga/BREEZER_X/wiki/videos",
-  "tipsAndTricksUrl": "https://github.com/msiraga/BREEZER_X/wiki/tips",
-  "keyboardShortcutsUrlMac": "https://github.com/msiraga/BREEZER_X/wiki/shortcuts-mac",
-  "keyboardShortcutsUrlLinux": "https://github.com/msiraga/BREEZER_X/wiki/shortcuts-linux",
-  "keyboardShortcutsUrlWin": "https://github.com/msiraga/BREEZER_X/wiki/shortcuts-win",
-  "quality": "stable",
-  "commit": "breezer-1.0.0",
-  "version": "1.0.0"
+  }
 }

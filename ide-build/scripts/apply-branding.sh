@@ -15,9 +15,16 @@ if [ ! -d "$CODE_OSS_DIR" ]; then
     exit 1
 fi
 
-# 1. Replace product metadata
+# 1. Merge product metadata (preserve original fields)
 echo "📝 Updating product.json..."
-cp "$BRANDING_DIR/product.json" "$CODE_OSS_DIR/product.json"
+if command -v jq &> /dev/null; then
+    # Merge our branding with original product.json
+    jq -s '.[0] * .[1]' "$CODE_OSS_DIR/product.json" "$BRANDING_DIR/product.json" > "$CODE_OSS_DIR/product.json.tmp"
+    mv "$CODE_OSS_DIR/product.json.tmp" "$CODE_OSS_DIR/product.json"
+else
+    echo "⚠️  jq not found, using full replacement (may cause build issues)"
+    cp "$BRANDING_DIR/product.json" "$CODE_OSS_DIR/product.json"
+fi
 
 # 2. Convert and copy icons for Linux
 echo "🐧 Setting up Linux icons..."
@@ -64,8 +71,14 @@ fi
 
 # 6. Disable telemetry in source code
 echo "🔒 Disabling telemetry..."
-# Find and replace telemetry settings
-find "$CODE_OSS_DIR/src" -type f -name "*.ts" -exec sed -i 's/enableTelemetry: true/enableTelemetry: false/g' {} \; 2>/dev/null || true
+# Find and replace telemetry settings (macOS compatible)
+if [[ "$OSTYPE" == "darwin"* ]]; then
+    # macOS requires empty string after -i
+    find "$CODE_OSS_DIR/src" -type f -name "*.ts" -exec sed -i '' 's/enableTelemetry: true/enableTelemetry: false/g' {} \; 2>/dev/null || true
+else
+    # Linux
+    find "$CODE_OSS_DIR/src" -type f -name "*.ts" -exec sed -i 's/enableTelemetry: true/enableTelemetry: false/g' {} \; 2>/dev/null || true
+fi
 
 # 7. Update README
 echo "📄 Creating custom README..."
