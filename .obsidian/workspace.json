@@ -1,0 +1,184 @@
+{
+  "main": {
+    "id": "acc9ed90da763956",
+    "type": "split",
+    "children": [
+      {
+        "id": "74adead37ce71595",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2510278ac8ef69ba",
+            "type": "leaf",
+            "state": {
+              "type": "markdown",
+              "state": {
+                "file": "AFTER_BUILD.md",
+                "mode": "source",
+                "source": false
+              },
+              "icon": "lucide-file",
+              "title": "AFTER_BUILD"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "eed1e0978c9f4863",
+    "type": "split",
+    "children": [
+      {
+        "id": "59d1f55aab412fb3",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "4c411c836bf50fca",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {
+                "sortOrder": "alphabetical",
+                "autoReveal": false
+              },
+              "icon": "lucide-folder-closed",
+              "title": "Files"
+            }
+          },
+          {
+            "id": "66947ca5a7572a63",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              },
+              "icon": "lucide-search",
+              "title": "Search"
+            }
+          },
+          {
+            "id": "84545f5c99fb2bf1",
+            "type": "leaf",
+            "state": {
+              "type": "bookmarks",
+              "state": {},
+              "icon": "lucide-bookmark",
+              "title": "Bookmarks"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "94b8a2094fc71dfa",
+    "type": "split",
+    "children": [
+      {
+        "id": "f9b1c9ad794be00f",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "21bc0b175c4c0aed",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "AFTER_BUILD.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-coming-in",
+              "title": "Backlinks for AFTER_BUILD"
+            }
+          },
+          {
+            "id": "0abdaf0e8469f62e",
+            "type": "leaf",
+            "state": {
+              "type": "outgoing-link",
+              "state": {
+                "file": "AFTER_BUILD.md",
+                "linksCollapsed": false,
+                "unlinkedCollapsed": true
+              },
+              "icon": "links-going-out",
+              "title": "Outgoing links from AFTER_BUILD"
+            }
+          },
+          {
+            "id": "756d2028d4c8cd7a",
+            "type": "leaf",
+            "state": {
+              "type": "tag",
+              "state": {
+                "sortOrder": "frequency",
+                "useHierarchy": true,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-tags",
+              "title": "Tags"
+            }
+          },
+          {
+            "id": "e45e4adc5be2398d",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "AFTER_BUILD.md",
+                "followCursor": false,
+                "showSearch": false,
+                "searchQuery": ""
+              },
+              "icon": "lucide-list",
+              "title": "Outline of AFTER_BUILD"
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300,
+    "collapsed": true
+  },
+  "left-ribbon": {
+    "hiddenItems": {
+      "switcher:Open quick switcher": false,
+      "graph:Open graph view": false,
+      "canvas:Create new canvas": false,
+      "daily-notes:Open today's daily note": false,
+      "templates:Insert template": false,
+      "command-palette:Open command palette": false,
+      "bases:Create new base": false
+    }
+  },
+  "active": "2510278ac8ef69ba",
+  "lastOpenFiles": [
+    "COMPETITIVE_ANALYSIS.md",
+    "BREEZER_CONSUMER_STRATEGY.md",
+    "PROJECT_SUMMARY.md",
+    "PROJECT_MEMORY.md",
+    "LLAMAFILE_SETUP.md",
+    "GITHUB_SETUP_PUBLIC.md",
+    "GITHUB_SETUP.md",
+    "DISTRIBUTION.md",
+    "AFTER_BUILD.md"
+  ]
+}
