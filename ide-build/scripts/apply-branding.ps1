@@ -55,9 +55,9 @@ if (Test-Path "$LogosSource\splash.png") {
 # 4. Update package.json
 Write-Host "Updating package.json..." -ForegroundColor Yellow
 $packageJson = Get-Content "$CodeOssDir\package.json" -Raw | ConvertFrom-Json
-$packageJson.name = "breezer-ide"
-$packageJson.productName = "BREEZER IDE"
-$packageJson.description = "AI-Powered Development Platform by RICHDALE AI"
+$packageJson | Add-Member -MemberType NoteProperty -Name "name" -Value "breezer-ide" -Force
+$packageJson | Add-Member -MemberType NoteProperty -Name "productName" -Value "BREEZER IDE" -Force
+$packageJson | Add-Member -MemberType NoteProperty -Name "description" -Value "AI-Powered Development Platform by RICHDALE AI" -Force
 $packageJson | ConvertTo-Json -Depth 100 | Set-Content "$CodeOssDir\package.json"
 
 # 5. Disable telemetry in source code
