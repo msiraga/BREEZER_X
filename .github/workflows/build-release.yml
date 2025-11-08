@@ -107,32 +107,54 @@ jobs:
       - name: Package
         run: |
           mkdir -p builds
-          # Debug: Show all possible locations
-          echo "=== Searching for build output ==="
-          ls -la code-oss/ || true
-          ls -la code-oss/.build/ || true
-          ls -la code-oss/.build/linux/ || true
-          ls -la code-oss/out-vscode/ || true
-          echo "=== Finding VSCode directories ==="
-          find code-oss -maxdepth 3 -name "*VSCode*" -o -name "*Code*" -type d || true
+          # Debug: Show what the build actually created
+          echo "=== Contents of .build directory ==="
+          ls -laR code-oss/.build/ | head -100 || true
+          echo "=== Contents of out-build ==="
+          ls -la code-oss/out-build/ || true
+          echo "=== Looking for any VS* directories ==="
+          find code-oss -maxdepth 2 -name "VS*" -type d || true
           
-          # Try all possible locations
+          # The gulp task might create files but not a packaged directory
+          # Let's check if we need to manually package from out-build or out-vscode
           if [ -d "code-oss/.build/linux/VSCode-linux-x64" ]; then
-            echo "Found in .build/linux/"
+            echo "Found packaged build in .build/linux/"
             cd code-oss/.build/linux
             tar -czf ../../../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
           elif [ -d "code-oss/VSCode-linux-x64" ]; then
-            echo "Found in root"
+            echo "Found packaged build in root"
             cd code-oss
             tar -czf ../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
-          elif [ -d "code-oss/out-vscode/VSCode-linux-x64" ]; then
-            echo "Found in out-vscode/"
-            cd code-oss/out-vscode
-            tar -czf ../../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
+          elif [ -d "code-oss/out-vscode" ] && [ -d "code-oss/out-build" ]; then
+            echo "Build succeeded but VSCode-linux-x64 not packaged yet"
+            echo "Running packaging task..."
+            cd code-oss
+            
+            # Try the minified build first
+            if npm run gulp vscode-linux-x64-min; then
+              echo "Packaging with vscode-linux-x64-min succeeded"
+            elif npm run gulp vscode-linux-x64-archive; then
+              echo "Packaging with vscode-linux-x64-archive succeeded"
+            else
+              echo "ERROR: Both packaging tasks failed"
+              echo "Available gulp tasks:"
+              npm run gulp -- --tasks | grep linux || true
+              exit 1
+            fi
+            
+            # Verify the package was created
+            if [ -d ".build/linux/VSCode-linux-x64" ]; then
+              echo "Package directory created successfully"
+              cd .build/linux
+              tar -czf ../../../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
+            else
+              echo "ERROR: Package directory still not found after running gulp tasks"
+              echo "Contents of .build/:"
+              ls -laR .build/
+              exit 1
+            fi
           else
-            echo "ERROR: Cannot find VSCode-linux-x64 directory anywhere"
-            echo "Full search results:"
-            find code-oss -name "*linux*" -type d
+            echo "ERROR: Cannot find build output"
             exit 1
           fi
       
@@ -181,29 +203,50 @@ jobs:
       - name: Package
         run: |
           New-Item -ItemType Directory -Force -Path builds
-          # Debug: Show all possible locations
-          Write-Host "=== Searching for build output ==="
-          Get-ChildItem code-oss | Format-Table
-          Get-ChildItem code-oss\.build -ErrorAction SilentlyContinue | Format-Table
-          Get-ChildItem code-oss\.build\win32-x64 -ErrorAction SilentlyContinue | Format-Table
-          Get-ChildItem code-oss\out-vscode -ErrorAction SilentlyContinue | Format-Table
-          Write-Host "=== Finding VSCode directories ==="
-          Get-ChildItem code-oss -Recurse -Depth 2 -Directory -Filter "*VSCode*" -ErrorAction SilentlyContinue
+          # Debug: Show what the build actually created
+          Write-Host "=== Contents of .build directory ==="
+          Get-ChildItem code-oss\.build -Recurse -ErrorAction SilentlyContinue | Select-Object -First 50
+          Write-Host "=== Contents of out-build ==="
+          Get-ChildItem code-oss\out-build -ErrorAction SilentlyContinue
+          Write-Host "=== Looking for VS* directories ==="
+          Get-ChildItem code-oss -Depth 1 -Directory -Filter "VS*" -ErrorAction SilentlyContinue
           
-          # Try all possible locations
+          # The gulp task might create files but not a packaged directory
           if (Test-Path "code-oss\.build\win32-x64\VSCode-win32-x64") {
-            Write-Host "Found in .build\win32-x64\"
+            Write-Host "Found packaged build in .build\win32-x64\"
             Compress-Archive -Path code-oss\.build\win32-x64\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
           } elseif (Test-Path "code-oss\VSCode-win32-x64") {
-            Write-Host "Found in root"
+            Write-Host "Found packaged build in root"
             Compress-Archive -Path code-oss\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
-          } elseif (Test-Path "code-oss\out-vscode\VSCode-win32-x64") {
-            Write-Host "Found in out-vscode\"
-            Compress-Archive -Path code-oss\out-vscode\VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
+          } elseif ((Test-Path "code-oss\out-vscode") -and (Test-Path "code-oss\out-build")) {
+            Write-Host "Build succeeded but VSCode-win32-x64 not packaged yet"
+            Write-Host "Running packaging task..."
+            cd code-oss
+            
+            # Try the minified build first
+            if (npm run gulp vscode-win32-x64-min) {
+              Write-Host "Packaging with vscode-win32-x64-min succeeded"
+            } elseif (npm run gulp vscode-win32-x64-archive) {
+              Write-Host "Packaging with vscode-win32-x64-archive succeeded"
+            } else {
+              Write-Error "Both packaging tasks failed"
+              Write-Host "Available gulp tasks:"
+              npm run gulp -- --tasks | Select-String "win32"
+              exit 1
+            }
+            
+            # Verify the package was created
+            if (Test-Path ".build\win32-x64\VSCode-win32-x64") {
+              Write-Host "Package directory created successfully"
+              Compress-Archive -Path .build\win32-x64\VSCode-win32-x64 -DestinationPath ..\builds\breezer-ide-windows-x64.zip
+            } else {
+              Write-Error "Package directory still not found after running gulp tasks"
+              Write-Host "Contents of .build:"
+              Get-ChildItem .build -Recurse
+              exit 1
+            }
           } else {
-            Write-Error "Cannot find VSCode-win32-x64 directory anywhere"
-            Write-Host "Full search results:"
-            Get-ChildItem code-oss -Recurse -Directory -Filter "*win32*"
+            Write-Error "Cannot find build output"
             exit 1
           }
       
@@ -252,32 +295,53 @@ jobs:
       - name: Package
         run: |
           mkdir -p builds
-          # Debug: Show all possible locations
-          echo "=== Searching for build output ==="
-          ls -la code-oss/ || true
-          ls -la code-oss/.build/ || true
-          ls -la code-oss/.build/darwin/ || true
-          ls -la code-oss/out-vscode/ || true
-          echo "=== Finding VSCode directories ==="
-          find code-oss -maxdepth 3 -name "*VSCode*" -o -name "*Code*" -type d || true
+          # Debug: Show what the build actually created
+          echo "=== Contents of .build directory ==="
+          ls -laR code-oss/.build/ | head -100 || true
+          echo "=== Contents of out-build ==="
+          ls -la code-oss/out-build/ || true
+          echo "=== Looking for any VS* directories ==="
+          find code-oss -maxdepth 2 -name "VS*" -type d || true
           
-          # Try all possible locations
+          # The gulp task might create files but not a packaged directory
           if [ -d "code-oss/.build/darwin/VSCode-darwin-x64" ]; then
-            echo "Found in .build/darwin/"
+            echo "Found packaged build in .build/darwin/"
             cd code-oss/.build/darwin
             tar -czf ../../../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
           elif [ -d "code-oss/VSCode-darwin-x64" ]; then
-            echo "Found in root"
+            echo "Found packaged build in root"
             cd code-oss
             tar -czf ../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
-          elif [ -d "code-oss/out-vscode/VSCode-darwin-x64" ]; then
-            echo "Found in out-vscode/"
-            cd code-oss/out-vscode
-            tar -czf ../../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
+          elif [ -d "code-oss/out-vscode" ] && [ -d "code-oss/out-build" ]; then
+            echo "Build succeeded but VSCode-darwin-x64 not packaged yet"
+            echo "Running packaging task..."
+            cd code-oss
+            
+            # Try the minified build first
+            if npm run gulp vscode-darwin-x64-min; then
+              echo "Packaging with vscode-darwin-x64-min succeeded"
+            elif npm run gulp vscode-darwin-x64-archive; then
+              echo "Packaging with vscode-darwin-x64-archive succeeded"
+            else
+              echo "ERROR: Both packaging tasks failed"
+              echo "Available gulp tasks:"
+              npm run gulp -- --tasks | grep darwin || true
+              exit 1
+            fi
+            
+            # Verify the package was created
+            if [ -d ".build/darwin/VSCode-darwin-x64" ]; then
+              echo "Package directory created successfully"
+              cd .build/darwin
+              tar -czf ../../../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
+            else
+              echo "ERROR: Package directory still not found after running gulp tasks"
+              echo "Contents of .build/:"
+              ls -laR .build/
+              exit 1
+            fi
           else
-            echo "ERROR: Cannot find VSCode-darwin-x64 directory anywhere"
-            echo "Full search results:"
-            find code-oss -name "*darwin*" -type d
+            echo "ERROR: Cannot find build output"
             exit 1
           fi
       
