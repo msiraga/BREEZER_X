@@ -143,14 +143,16 @@ jobs:
             fi
             
             # Verify the package was created
-            if [ -d ".build/linux/VSCode-linux-x64" ]; then
+            # Gulp outputs to parent directory: BREEZER_X/VSCode-linux-x64/
+            cd ..
+            if [ -d "VSCode-linux-x64" ]; then
               echo "Package directory created successfully"
-              cd .build/linux
-              tar -czf ../../../builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
+              tar -czf builds/breezer-ide-linux-x64.tar.gz VSCode-linux-x64
             else
-              echo "ERROR: Package directory still not found after running gulp tasks"
-              echo "Contents of .build/:"
-              ls -laR .build/
+              echo "ERROR: Package directory not found after running gulp tasks"
+              echo "Expected: VSCode-linux-x64/ in repo root"
+              echo "Current directory contents:"
+              ls -la
               exit 1
             fi
           else
@@ -236,13 +238,16 @@ jobs:
             }
             
             # Verify the package was created
-            if (Test-Path ".build\win32-x64\VSCode-win32-x64") {
+            # Gulp outputs to parent directory: BREEZER_X\VSCode-win32-x64\
+            cd ..
+            if (Test-Path "VSCode-win32-x64") {
               Write-Host "Package directory created successfully"
-              Compress-Archive -Path .build\win32-x64\VSCode-win32-x64 -DestinationPath ..\builds\breezer-ide-windows-x64.zip
+              Compress-Archive -Path VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
             } else {
-              Write-Error "Package directory still not found after running gulp tasks"
-              Write-Host "Contents of .build:"
-              Get-ChildItem .build -Recurse
+              Write-Error "Package directory not found after running gulp tasks"
+              Write-Host "Expected: VSCode-win32-x64\ in repo root"
+              Write-Host "Current directory contents:"
+              Get-ChildItem
               exit 1
             }
           } else {
@@ -330,14 +335,16 @@ jobs:
             fi
             
             # Verify the package was created
-            if [ -d ".build/darwin/VSCode-darwin-x64" ]; then
+            # Gulp outputs to parent directory: BREEZER_X/VSCode-darwin-x64/
+            cd ..
+            if [ -d "VSCode-darwin-x64" ]; then
               echo "Package directory created successfully"
-              cd .build/darwin
-              tar -czf ../../../builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
+              tar -czf builds/breezer-ide-darwin-x64.tar.gz VSCode-darwin-x64
             else
-              echo "ERROR: Package directory still not found after running gulp tasks"
-              echo "Contents of .build/:"
-              ls -laR .build/
+              echo "ERROR: Package directory not found after running gulp tasks"
+              echo "Expected: VSCode-darwin-x64/ in repo root"
+              echo "Current directory contents:"
+              ls -la
               exit 1
             fi
           else
