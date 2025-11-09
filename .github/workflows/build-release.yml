@@ -321,7 +321,8 @@ jobs:
           }
           
           # Check 3: Load order is correct (bootstrap before workbench module)
-          if ($html -match 'bootstrap-window\.js.*workbench\.js"[^>]*type="module"') {
+          # Use (?s) to make . match newlines (single-line mode)
+          if ($html -match '(?s)bootstrap-window\.js.*workbench\.js"[^>]*type="module"') {
             Write-Host "✓ Guard 2: Load order correct (bootstrap → workbench module)"
           } else {
             Write-Error "VALIDATION FAILED: Incorrect load order in workbench.html"

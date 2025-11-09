@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "AFTER_BUILD.md",
+                "file": "WINDOWS_BLUE_SCREEN_ISSUE.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "AFTER_BUILD"
+              "title": "WINDOWS_BLUE_SCREEN_ISSUE"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "AFTER_BUILD.md",
+                "file": "WINDOWS_BLUE_SCREEN_ISSUE.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for AFTER_BUILD"
+              "title": "Backlinks for WINDOWS_BLUE_SCREEN_ISSUE"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "AFTER_BUILD.md",
+                "file": "WINDOWS_BLUE_SCREEN_ISSUE.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from AFTER_BUILD"
+              "title": "Outgoing links from WINDOWS_BLUE_SCREEN_ISSUE"
             }
           },
           {
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "AFTER_BUILD.md",
+                "file": "WINDOWS_BLUE_SCREEN_ISSUE.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of AFTER_BUILD"
+              "title": "Outline of WINDOWS_BLUE_SCREEN_ISSUE"
             }
           }
         ]
@@ -171,6 +171,8 @@
   },
   "active": "2510278ac8ef69ba",
   "lastOpenFiles": [
+    "WINDOWS_BLUE_SCREEN_ISSUE.md",
+    "AFTER_BUILD.md",
     "COMPETITIVE_ANALYSIS.md",
     "BREEZER_CONSUMER_STRATEGY.md",
     "PROJECT_SUMMARY.md",
@@ -178,7 +180,6 @@
     "LLAMAFILE_SETUP.md",
     "GITHUB_SETUP_PUBLIC.md",
     "GITHUB_SETUP.md",
-    "DISTRIBUTION.md",
-    "AFTER_BUILD.md"
+    "DISTRIBUTION.md"
   ]
 }
