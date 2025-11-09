@@ -13,12 +13,12 @@
             "state": {
               "type": "markdown",
               "state": {
-                "file": "WINDOWS_BLUE_SCREEN_ISSUE.md",
+                "file": "PLAN_B_PRELOAD_WRAPPER.md",
                 "mode": "source",
                 "source": false
               },
               "icon": "lucide-file",
-              "title": "WINDOWS_BLUE_SCREEN_ISSUE"
+              "title": "PLAN_B_PRELOAD_WRAPPER"
             }
           }
         ]
@@ -94,7 +94,7 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "WINDOWS_BLUE_SCREEN_ISSUE.md",
+                "file": "PLAN_B_PRELOAD_WRAPPER.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +104,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for WINDOWS_BLUE_SCREEN_ISSUE"
+              "title": "Backlinks for PLAN_B_PRELOAD_WRAPPER"
             }
           },
           {
@@ -113,12 +113,12 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "WINDOWS_BLUE_SCREEN_ISSUE.md",
+                "file": "PLAN_B_PRELOAD_WRAPPER.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from WINDOWS_BLUE_SCREEN_ISSUE"
+              "title": "Outgoing links from PLAN_B_PRELOAD_WRAPPER"
             }
           },
           {
@@ -142,13 +142,13 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "WINDOWS_BLUE_SCREEN_ISSUE.md",
+                "file": "PLAN_B_PRELOAD_WRAPPER.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of WINDOWS_BLUE_SCREEN_ISSUE"
+              "title": "Outline of PLAN_B_PRELOAD_WRAPPER"
             }
           }
         ]
@@ -171,7 +171,13 @@
   },
   "active": "2510278ac8ef69ba",
   "lastOpenFiles": [
+    "BREEZER_SIGNING_CERTIFICATE_PROCESS.md",
+    "ide-build/branding/icons/splash.png",
+    "ide-build/branding/icons/breezer.ico",
+    "ide-build/branding/icons",
     "WINDOWS_BLUE_SCREEN_ISSUE.md",
+    "PLAN_B_PRELOAD_WRAPPER.md",
+    "PLAN_A_IMPLEMENTATION.md",
     "AFTER_BUILD.md",
     "COMPETITIVE_ANALYSIS.md",
     "BREEZER_CONSUMER_STRATEGY.md",

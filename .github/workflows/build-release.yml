@@ -340,6 +340,41 @@ jobs:
           Compress-Archive -Path VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
           Write-Host "✅ Windows artifact recreated successfully!"
       
+      - name: Suppress integrity warning
+        run: |
+          Write-Host "=== Disabling VS Code integrity checks ==="
+          
+          $productJson = "VSCode-win32-x64\resources\app\product.json"
+          
+          if (!(Test-Path $productJson)) {
+            Write-Error "product.json not found at $productJson"
+            exit 1
+          }
+          
+          # Read and parse product.json
+          $product = Get-Content $productJson -Raw | ConvertFrom-Json
+          
+          # Remove checksums that trigger "corrupt installation" warning
+          if ($product.PSObject.Properties['checksums']) {
+            $product.PSObject.Properties.Remove('checksums')
+            Write-Host "✓ Removed file checksums"
+          }
+          
+          # Set quality to 'insider' to disable strict validation
+          $originalQuality = $product.quality
+          $product.quality = "insider"
+          Write-Host "✓ Changed quality: $originalQuality → insider"
+          
+          # Save back to product.json
+          $product | ConvertTo-Json -Depth 10 | Set-Content -Path $productJson -NoNewline
+          Write-Host "✓ Updated product.json"
+          
+          # Recreate ZIP with updated product.json
+          Write-Host "`nRecreating artifact with integrity checks disabled..."
+          Remove-Item builds\breezer-ide-windows-x64.zip -Force
+          Compress-Archive -Path VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
+          Write-Host "✅ Final Windows artifact ready (no integrity warnings)"
+      
       - name: Upload artifact
         uses: actions/upload-artifact@v4
         with:

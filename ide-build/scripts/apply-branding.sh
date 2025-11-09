@@ -5,7 +5,7 @@ set -e
 
 CODE_OSS_DIR=${1:-"code-oss"}
 BRANDING_DIR="ide-build/branding"
-LOGOS_SOURCE="C:/Users/msira/Downloads/breezer_ico"
+LOGOS_SOURCE="$BRANDING_DIR/icons"
 
 echo "🏄 Applying BREEZER IDE branding..."
 

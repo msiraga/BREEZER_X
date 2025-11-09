@@ -8,7 +8,7 @@ param(
 $ErrorActionPreference = "Stop"
 
 $BrandingDir = "ide-build\branding"
-$LogosSource = "C:\Users\msira\Downloads\breezer_ico"
+$LogosSource = "$BrandingDir\icons"
 
 Write-Host "Applying BREEZER IDE branding..." -ForegroundColor Cyan
 
