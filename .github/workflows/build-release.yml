@@ -273,10 +273,16 @@ jobs:
           $originalSize = (Get-Item $workbenchJs).Length
           Write-Host "Original workbench.js size: $originalSize bytes"
           
-          # Read both files and concatenate
+          # Read both files and strip sourcemap comments before concatenating
           $bootstrapContent = Get-Content $bootstrapWindow -Raw
           $workbenchContent = Get-Content $workbenchJs -Raw
-          $fixedContent = $bootstrapContent + "," + $workbenchContent
+          
+          # Remove sourcemap comments to avoid syntax errors (use \r?\n to match line endings)
+          $bootstrapContent = $bootstrapContent -replace '//# sourceMappingURL=.*(\r?\n)?', ''
+          $workbenchContent = $workbenchContent -replace '//# sourceMappingURL=.*(\r?\n)?', ''
+          
+          # Concatenate with comma separator
+          $fixedContent = $bootstrapContent.TrimEnd() + "," + $workbenchContent
           
           # Write the combined content
           Set-Content -Path $workbenchJs -Value $fixedContent -NoNewline
