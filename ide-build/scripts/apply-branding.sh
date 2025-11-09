@@ -28,33 +28,50 @@ fi
 
 # 2. Convert and copy icons for Linux
 echo "🐧 Setting up Linux icons..."
-if [ -f "$LOGOS_SOURCE/splash.png" ]; then
-    # Use splash as base, resize for Linux icon
-    convert "$LOGOS_SOURCE/splash.png" -resize 512x512 "$CODE_OSS_DIR/resources/linux/code.png" 2>/dev/null || \
-    cp "$LOGOS_SOURCE/splash.png" "$CODE_OSS_DIR/resources/linux/code.png"
+mkdir -p "$CODE_OSS_DIR/resources/linux"
+if [ -f "$LOGOS_SOURCE/breezer.ico" ]; then
+    # Convert ICO to PNG for Linux (extract largest size from multi-resolution ICO)
+    if convert "$LOGOS_SOURCE/breezer.ico[0]" -resize 512x512 "$CODE_OSS_DIR/resources/linux/code.png" 2>/dev/null; then
+        echo "✓ Converted breezer.ico to Linux PNG icon (512x512)"
+    else
+        echo "⚠️  ImageMagick conversion failed, trying fallback..."
+        # Fallback: try without [0] index
+        convert "$LOGOS_SOURCE/breezer.ico" -resize 512x512 "$CODE_OSS_DIR/resources/linux/code.png" 2>/dev/null || \
+        echo "❌ Could not convert ICO to PNG for Linux"
+    fi
 fi
 
 # 3. Setup Windows icons
 echo "🪟 Setting up Windows icons..."
+mkdir -p "$CODE_OSS_DIR/resources/win32"
 if [ -f "$LOGOS_SOURCE/breezer.ico" ]; then
     cp "$LOGOS_SOURCE/breezer.ico" "$CODE_OSS_DIR/resources/win32/code.ico"
+    echo "✓ Copied Windows icon"
 fi
 
-if [ -f "$LOGOS_SOURCE/splash.png" ]; then
-    # Resize for Windows tiles
-    convert "$LOGOS_SOURCE/splash.png" -resize 256x256 "$CODE_OSS_DIR/resources/win32/code_150x150.png" 2>/dev/null || \
-    cp "$LOGOS_SOURCE/splash.png" "$CODE_OSS_DIR/resources/win32/code_150x150.png"
+if [ -f "$LOGOS_SOURCE/breezer.ico" ]; then
+    # Convert ICO to PNG for Windows tiles (Start menu tiles)
+    convert "$LOGOS_SOURCE/breezer.ico[0]" -resize 150x150 "$CODE_OSS_DIR/resources/win32/code_150x150.png" 2>/dev/null || \
+    convert "$LOGOS_SOURCE/breezer.ico" -resize 150x150 "$CODE_OSS_DIR/resources/win32/code_150x150.png" 2>/dev/null || \
+    echo "⚠️  Could not create 150x150 tile"
     
-    convert "$LOGOS_SOURCE/splash.png" -resize 70x70 "$CODE_OSS_DIR/resources/win32/code_70x70.png" 2>/dev/null || \
-    cp "$LOGOS_SOURCE/splash.png" "$CODE_OSS_DIR/resources/win32/code_70x70.png"
+    convert "$LOGOS_SOURCE/breezer.ico[0]" -resize 70x70 "$CODE_OSS_DIR/resources/win32/code_70x70.png" 2>/dev/null || \
+    convert "$LOGOS_SOURCE/breezer.ico" -resize 70x70 "$CODE_OSS_DIR/resources/win32/code_70x70.png" 2>/dev/null || \
+    echo "⚠️  Could not create 70x70 tile"
+    
+    echo "✓ Created Windows tile icons from breezer.ico"
 fi
 
 # 4. Setup macOS icons
 echo "🍎 Setting up macOS icons..."
+mkdir -p "$CODE_OSS_DIR/resources/darwin"
 if [ -f "$LOGOS_SOURCE/breezer.ico" ]; then
     # Convert ICO to ICNS for macOS (requires imagemagick)
-    convert "$LOGOS_SOURCE/breezer.ico" "$CODE_OSS_DIR/resources/darwin/code.icns" 2>/dev/null || \
-    echo "⚠️  Could not convert to ICNS, manual conversion needed"
+    if convert "$LOGOS_SOURCE/breezer.ico" "$CODE_OSS_DIR/resources/darwin/code.icns" 2>/dev/null; then
+        echo "✓ Converted and copied macOS icon"
+    else
+        echo "⚠️  Could not convert to ICNS, manual conversion needed"
+    fi
 fi
 
 # 5. Update package.json

@@ -361,8 +361,8 @@ jobs:
           }
           
           # Set quality to 'insider' to disable strict validation
-          $originalQuality = $product.quality
-          $product.quality = "insider"
+          $originalQuality = if ($product.PSObject.Properties['quality']) { $product.quality } else { "none" }
+          $product | Add-Member -MemberType NoteProperty -Name "quality" -Value "insider" -Force
           Write-Host "✓ Changed quality: $originalQuality → insider"
           
           # Save back to product.json

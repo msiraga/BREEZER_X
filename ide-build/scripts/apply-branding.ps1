@@ -33,23 +33,30 @@ $originalProduct | ConvertTo-Json -Depth 100 | Set-Content "$CodeOssDir\product.
 # 2. Setup Windows icons
 Write-Host "Setting up Windows icons..." -ForegroundColor Yellow
 
+# Ensure directory exists
+New-Item -ItemType Directory -Force -Path "$CodeOssDir\resources\win32" | Out-Null
+
 if (Test-Path "$LogosSource\breezer.ico") {
     Copy-Item "$LogosSource\breezer.ico" "$CodeOssDir\resources\win32\code.ico" -Force
     Write-Host "  Copied breezer.ico" -ForegroundColor Green
-}
-
-if (Test-Path "$LogosSource\splash.png") {
-    # For now, just copy splash.png directly
-    # In production, you'd want to resize these properly
-    Copy-Item "$LogosSource\splash.png" "$CodeOssDir\resources\win32\code_150x150.png" -Force
-    Copy-Item "$LogosSource\splash.png" "$CodeOssDir\resources\win32\code_70x70.png" -Force
-    Write-Host "  Copied splash images" -ForegroundColor Green
+    
+    # Note: Windows tiles (150x150, 70x70) would need conversion from ICO to PNG
+    # For now, the main .ico file contains multiple sizes and Windows will use appropriate one
+    # If you need explicit PNGs, install ImageMagick and add conversion here
 }
 
 # 3. Setup Linux icons
 Write-Host "Setting up Linux icons..." -ForegroundColor Yellow
-if (Test-Path "$LogosSource\splash.png") {
-    Copy-Item "$LogosSource\splash.png" "$CodeOssDir\resources\linux\code.png" -Force
+
+# Ensure directory exists
+New-Item -ItemType Directory -Force -Path "$CodeOssDir\resources\linux" | Out-Null
+
+if (Test-Path "$LogosSource\breezer.ico") {
+    # Note: Linux needs PNG, not ICO
+    # If ImageMagick is available, convert ICO to PNG
+    # For PowerShell on Windows build machine, this is handled by bash script
+    # This script typically runs on Windows for local testing
+    Write-Host "  breezer.ico found (conversion to PNG happens in CI/CD)" -ForegroundColor Yellow
 }
 
 # 4. Update package.json
