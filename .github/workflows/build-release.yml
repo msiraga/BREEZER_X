@@ -255,54 +255,89 @@ jobs:
             exit 1
           }
       
-      - name: Fix Windows workbench.js bundling
+      - name: Fix Windows bootstrap loading (Plan A)
         run: |
-          $workbenchJs = "VSCode-win32-x64\resources\app\out\vs\code\electron-sandbox\workbench\workbench.js"
-          $bootstrapWindow = "code-oss\out\bootstrap-window.js"
+          Write-Host "=== Implementing Plan A: Ship bootstrap-window.js separately ==="
           
-          if (!(Test-Path $workbenchJs)) {
-            Write-Error "workbench.js not found at $workbenchJs"
+          # 1. Verify bootstrap-window.js was compiled
+          $bootstrapSource = "code-oss\out\bootstrap-window.js"
+          if (!(Test-Path $bootstrapSource)) {
+            Write-Error "bootstrap-window.js not compiled - build incomplete"
+            exit 1
+          }
+          Write-Host "✓ Found compiled bootstrap-window.js ($(((Get-Item $bootstrapSource).Length)) bytes)"
+          
+          # 2. Copy bootstrap-window.js to package (matches official VS Code structure)
+          $packageOut = "VSCode-win32-x64\resources\app\out"
+          $bootstrapDest = "$packageOut\bootstrap-window.js"
+          
+          if (!(Test-Path $packageOut)) {
+            Write-Error "Package output directory not found: $packageOut"
             exit 1
           }
           
-          if (!(Test-Path $bootstrapWindow)) {
-            Write-Error "bootstrap-window.js not found at $bootstrapWindow"
+          Copy-Item -Force $bootstrapSource $bootstrapDest
+          Write-Host "✓ Copied bootstrap-window.js to package: $bootstrapDest"
+          
+          # 3. Patch workbench.html to load bootstrap before workbench module
+          $workbenchHtml = "VSCode-win32-x64\resources\app\out\vs\code\electron-sandbox\workbench\workbench.html"
+          
+          if (!(Test-Path $workbenchHtml)) {
+            Write-Error "workbench.html not found at $workbenchHtml"
             exit 1
           }
           
-          $originalSize = (Get-Item $workbenchJs).Length
-          Write-Host "Original workbench.js size: $originalSize bytes"
+          $html = Get-Content $workbenchHtml -Raw
           
-          # Read both files and strip sourcemap comments before concatenating
-          $bootstrapContent = Get-Content $bootstrapWindow -Raw
-          $workbenchContent = Get-Content $workbenchJs -Raw
+          # Only patch if not already patched (idempotent)
+          if ($html -notmatch 'bootstrap-window\.js') {
+            Write-Host "Patching workbench.html to load bootstrap-window.js..."
+            
+            # Insert bootstrap script tag before the workbench module
+            $html = $html -replace '(<script\s+[^>]*src="\./workbench\.js"[^>]*type="module"[^>]*>\s*</script>)',
+              "`t`t<!-- MUST run first to define window.MonacoBootstrapWindow -->`r`n`t`t<script src=`"../../../../bootstrap-window.js`"></script>`r`n`r`n`t`t`$1"
+            
+            Set-Content -NoNewline -Path $workbenchHtml -Value $html
+            Write-Host "✓ Patched workbench.html to load bootstrap-window.js before workbench.js"
+          } else {
+            Write-Host "✓ workbench.html already loads bootstrap-window.js (skipping patch)"
+          }
           
-          # Remove sourcemap comments to avoid syntax errors (use \r?\n to match line endings)
-          $bootstrapContent = $bootstrapContent -replace '//# sourceMappingURL=.*(\r?\n)?', ''
-          $workbenchContent = $workbenchContent -replace '//# sourceMappingURL=.*(\r?\n)?', ''
+          # 4. Validate the fix (guards against regression)
+          Write-Host "`n=== Validating fix ==="
           
-          # Concatenate with comma separator
-          $fixedContent = $bootstrapContent.TrimEnd() + "," + $workbenchContent
+          # Check 1: bootstrap-window.js exists in package
+          if (!(Test-Path $bootstrapDest)) {
+            Write-Error "VALIDATION FAILED: bootstrap-window.js missing from package"
+            exit 1
+          }
+          Write-Host "✓ Guard 1: bootstrap-window.js present in package"
           
-          # Write the combined content
-          Set-Content -Path $workbenchJs -Value $fixedContent -NoNewline
-          
-          $fixedSize = (Get-Item $workbenchJs).Length
-          Write-Host "Fixed workbench.js size: $fixedSize bytes"
-          
-          # Verify the file actually grew (bootstrap-window should add ~8-9KB)
-          if ($fixedSize -le $originalSize) {
-            Write-Error "Fix failed! File size did not increase (original: $originalSize, fixed: $fixedSize)"
+          # Check 2: workbench.html loads bootstrap before module
+          $html = Get-Content $workbenchHtml -Raw
+          if ($html -notmatch 'bootstrap-window\.js') {
+            Write-Error "VALIDATION FAILED: workbench.html not loading bootstrap-window.js"
             exit 1
           }
           
-          Write-Host "Windows workbench.js successfully fixed! Size increased by $($fixedSize - $originalSize) bytes"
+          # Check 3: Load order is correct (bootstrap before workbench module)
+          if ($html -match 'bootstrap-window\.js.*workbench\.js"[^>]*type="module"') {
+            Write-Host "✓ Guard 2: Load order correct (bootstrap → workbench module)"
+          } else {
+            Write-Error "VALIDATION FAILED: Incorrect load order in workbench.html"
+            exit 1
+          }
           
-          # Recreate the zip with the fixed file
-          Write-Host "Recreating Windows artifact with fixed workbench.js..."
+          Write-Host "`n✅ Plan A implementation successful!"
+          Write-Host "   • bootstrap-window.js shipped separately (like official VS Code)"
+          Write-Host "   • workbench.html loads bootstrap before workbench module"
+          Write-Host "   • window.MonacoBootstrapWindow will be defined before use"
+          
+          # 5. Recreate the zip with the fixed files
+          Write-Host "`nRecreating Windows artifact with Plan A fixes..."
           Remove-Item builds\breezer-ide-windows-x64.zip -Force
           Compress-Archive -Path VSCode-win32-x64 -DestinationPath builds\breezer-ide-windows-x64.zip
-          Write-Host "Windows artifact recreated successfully!"
+          Write-Host "✅ Windows artifact recreated successfully!"
       
       - name: Upload artifact
         uses: actions/upload-artifact@v4
