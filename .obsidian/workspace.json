@@ -11,14 +11,10 @@
             "id": "2510278ac8ef69ba",
             "type": "leaf",
             "state": {
-              "type": "markdown",
-              "state": {
-                "file": "PLAN_B_PRELOAD_WRAPPER.md",
-                "mode": "source",
-                "source": false
-              },
+              "type": "empty",
+              "state": {},
               "icon": "lucide-file",
-              "title": "PLAN_B_PRELOAD_WRAPPER"
+              "title": "New tab"
             }
           }
         ]
@@ -94,7 +90,6 @@
             "state": {
               "type": "backlink",
               "state": {
-                "file": "PLAN_B_PRELOAD_WRAPPER.md",
                 "collapseAll": false,
                 "extraContext": false,
                 "sortOrder": "alphabetical",
@@ -104,7 +99,7 @@
                 "unlinkedCollapsed": true
               },
               "icon": "links-coming-in",
-              "title": "Backlinks for PLAN_B_PRELOAD_WRAPPER"
+              "title": "Backlinks"
             }
           },
           {
@@ -113,12 +108,11 @@
             "state": {
               "type": "outgoing-link",
               "state": {
-                "file": "PLAN_B_PRELOAD_WRAPPER.md",
                 "linksCollapsed": false,
                 "unlinkedCollapsed": true
               },
               "icon": "links-going-out",
-              "title": "Outgoing links from PLAN_B_PRELOAD_WRAPPER"
+              "title": "Outgoing links"
             }
           },
           {
@@ -142,13 +136,12 @@
             "state": {
               "type": "outline",
               "state": {
-                "file": "PLAN_B_PRELOAD_WRAPPER.md",
                 "followCursor": false,
                 "showSearch": false,
                 "searchQuery": ""
               },
               "icon": "lucide-list",
-              "title": "Outline of PLAN_B_PRELOAD_WRAPPER"
+              "title": "Outline"
             }
           }
         ]
@@ -171,21 +164,42 @@
   },
   "active": "2510278ac8ef69ba",
   "lastOpenFiles": [
-    "BREEZER_SIGNING_CERTIFICATE_PROCESS.md",
-    "ide-build/branding/icons/splash.png",
-    "ide-build/branding/icons/breezer.ico",
-    "ide-build/branding/icons",
-    "WINDOWS_BLUE_SCREEN_ISSUE.md",
-    "PLAN_B_PRELOAD_WRAPPER.md",
-    "PLAN_A_IMPLEMENTATION.md",
+    "backend/docker-compose.yml",
+    "documentation/operations/README.md",
+    "documentation/operations/CHANGELOG.md",
+    "documentation/technical/core/PROJECT_MEMORY.md",
+    "documentation/technical/core/PLAN_B_PRELOAD_WRAPPER.md",
+    "documentation/technical/core/PLAN_A_IMPLEMENTATION.md",
+    "documentation/technical/architecture/AGENT_SYSTEM.md",
+    "documentation/technical/architecture/BREEZER_CONSUMER_STRATEGY.md",
+    "documentation/technical/architecture/BREEZER_CHAT_IMPLEMENTATION_STRATEGY.md",
+    "documentation/technical/build/BREEZER_SIGNING_CERTIFICATE_PROCESS.md",
+    "documentation/technical/build/AFTER_BUILD.md",
+    "documentation/technical/setup/GITHUB_SETUP_PUBLIC.md",
+    "documentation/technical/setup/SETUP.md",
+    "documentation/technical/setup/LLAMAFILE_SETUP.md",
+    "documentation/overview/DISTRIBUTION.md",
+    "documentation/overview/COMPETITIVE_ANALYSIS.md",
+    "documentation/overview/PROJECT_SUMMARY.md",
+    "documentation/overview",
+    "documentation/technical/setup",
+    "documentation/technical/build",
+    "documentation/technical/architecture",
+    "documentation/technical/core",
+    "documentation/technical",
+    "documentation/operations",
+    "documentation/INDEX.md",
     "AFTER_BUILD.md",
-    "COMPETITIVE_ANALYSIS.md",
-    "BREEZER_CONSUMER_STRATEGY.md",
-    "PROJECT_SUMMARY.md",
-    "PROJECT_MEMORY.md",
-    "LLAMAFILE_SETUP.md",
-    "GITHUB_SETUP_PUBLIC.md",
-    "GITHUB_SETUP.md",
-    "DISTRIBUTION.md"
+    "documentation/WINDOWS_BLUE_SCREEN_ISSUE.md",
+    "documentation/SETUP.md",
+    "documentation/README.md",
+    "documentation/PROJECT_SUMMARY.md",
+    "documentation/PROJECT_MEMORY.md",
+    "documentation/PLAN_B_PRELOAD_WRAPPER.md",
+    "documentation/PLAN_A_IMPLEMENTATION.md",
+    "documentation",
+    "backend/venv/Scripts/deactivate.bat",
+    "backend/venv/Scripts/activate.bat",
+    "ide-build/branding/icons/splash.png"
   ]
 }

@@ -202,6 +202,46 @@ jobs:
           npm run compile
           npm run gulp vscode-win32-x64
       
+      - name: Validate icon embedding
+        run: |
+          Write-Host "=== Validating BREEZER icon in Windows build ===" -ForegroundColor Cyan
+          
+          # Check if icon files exist in build output
+          $packagePath = "VSCode-win32-x64"
+          $exePath = "$packagePath\Code.exe"
+          
+          if (!(Test-Path $exePath)) {
+            Write-Error "Code.exe not found at $exePath"
+            exit 1
+          }
+          
+          Write-Host "✓ Code.exe found" -ForegroundColor Green
+          
+          # Verify icon resources exist in package
+          $iconResources = @(
+            "$packagePath\resources\app\resources\win32\code.ico",
+            "$packagePath\resources\app\resources\win32\app.ico"
+          )
+          
+          $missingIcons = @()
+          foreach ($iconPath in $iconResources) {
+            if (Test-Path $iconPath) {
+              $size = (Get-Item $iconPath).Length
+              Write-Host "✓ Icon present: $iconPath ($size bytes)" -ForegroundColor Green
+            } else {
+              Write-Host "✗ Icon MISSING: $iconPath" -ForegroundColor Red
+              $missingIcons += $iconPath
+            }
+          }
+          
+          if ($missingIcons.Count -gt 0) {
+            Write-Error "Icon validation failed: $($missingIcons.Count) icon(s) missing"
+            exit 1
+          }
+          
+          Write-Host ""
+          Write-Host "✅ Icon validation passed!" -ForegroundColor Green
+      
       - name: Package
         run: |
           New-Item -ItemType Directory -Force -Path builds

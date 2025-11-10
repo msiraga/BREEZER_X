@@ -55,11 +55,8 @@ class LLMRouter:
             litellm.api_base = settings.DEEPSEEK_BASE_URL
         
         # Setup Llamafile for local sensitive data
-        if settings.LLAMAFILE_ENABLED:
-            litellm.set_custom_llm(
-                "llamafile",
-                settings.LLAMAFILE_BASE_URL
-            )
+        # Modern litellm handles custom base URLs directly in completion calls
+        self.llamafile_base_url = settings.LLAMAFILE_BASE_URL if settings.LLAMAFILE_ENABLED else None
         
     async def complete(
         self,
@@ -90,13 +87,18 @@ class LLMRouter:
         try:
             logger.info(f"🤖 {agent_type.value} using model: {model}")
             
+            # Use custom base URL for Llamafile
+            completion_kwargs = kwargs.copy()
+            if "llamafile" in model.lower() and self.llamafile_base_url:
+                completion_kwargs["api_base"] = self.llamafile_base_url
+            
             response = await litellm.acompletion(
                 model=model,
                 messages=messages,
                 temperature=temperature,
                 max_tokens=max_tokens,
                 stream=stream,
-                **kwargs
+                **completion_kwargs
             )
             
             return response
@@ -108,13 +110,18 @@ class LLMRouter:
             if model != settings.MODEL_FALLBACK:
                 logger.warning(f"Retrying with fallback model: {settings.MODEL_FALLBACK}")
                 try:
+                    # Use custom base URL for fallback if it's Llamafile
+                    fallback_kwargs = kwargs.copy()
+                    if "llamafile" in settings.MODEL_FALLBACK.lower() and self.llamafile_base_url:
+                        fallback_kwargs["api_base"] = self.llamafile_base_url
+                    
                     response = await litellm.acompletion(
                         model=settings.MODEL_FALLBACK,
                         messages=messages,
                         temperature=temperature,
                         max_tokens=max_tokens,
                         stream=stream,
-                        **kwargs
+                        **fallback_kwargs
                     )
                     return response
                 except Exception as fallback_error:

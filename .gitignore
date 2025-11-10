@@ -46,45 +46,144 @@ __pycache__/
 *$py.class
 *.so
 .Python
+
+# Virtual Environments
 env/
 venv/
 ENV/
-.venv
+env.bak/
+venv.bak/
+.venv/
+.conda/
+poetry.lock
+Pipfile.lock
+
+# Python Package Manager
 pip-log.txt
 pip-delete-this-directory.txt
-.pytest_cache/
 *.egg-info/
+*.egg
 dist/
 build/
+wheels/
+share/python-wheels/
+
+# Testing & Coverage
+.pytest_cache/
+.coverage
+.coverage.*
+htmlcov/
+.tox/
+.nox/
+coverage.xml
+*.cover
+*.py,cover
+.hypothesis/
+
+# Type Checking
+.mypy_cache/
+.dmypy.json
+dmypy.json
+.pytype/
+pyrightconfig.json
+
+# Jupyter Notebooks
+.ipynb_checkpoints/
+*.ipynb
+
+# ML/AI Model Caches
+.cache/
+*.ckpt
+*.pt
+*.pth
+*.h5
+*.hdf5
+*.safetensors
+wandb/
+mlruns/
+
+# PyTorch/Transformers
+torch_extensions/
+.vector_cache/
+.transformers_cache/
+
+# LangChain/LangSmith
+.langchain/
+.langsmith/
 
 # Node.js
 node_modules/
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
-package-lock.json
-yarn.lock
+lerna-debug.log*
+.npm
+.eslintcache
+.node_repl_history
+*.tgz
+.yarn-integrity
+
+# Lock files (optional - uncomment if you want to track these)
+# package-lock.json
+# yarn.lock
+# pnpm-lock.yaml
 
 # ============================================================================
 # IDEs and Editors
 # ============================================================================
 
-# VSCode
+# VSCode / VS Codium
 .vscode/
+.vscode-test/
 *.code-workspace
+.history/
 
-# JetBrains
+# JetBrains (PyCharm, WebStorm, IntelliJ, etc.)
 .idea/
 *.iml
+*.ipr
+*.iws
+out/
+.idea_modules/
+
+# Sublime Text
+*.sublime-project
+*.sublime-workspace
 
 # Vim
 *.swp
 *.swo
+*.swn
 *~
+.netrwhist
 
 # Emacs
 *~
 \#*\#
+.#*
+*.elc
+auto-save-list
+tramp
+
+# Atom
+.atom/
+
+# Visual Studio
+.vs/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Eclipse
+.project
+.classpath
+.settings/
+*.pydevproject
+
+# Obsidian (for documentation)
+.obsidian/workspace.json
+.obsidian/workspace-mobile.json
 
 # ============================================================================
 # OS Files
@@ -135,30 +234,77 @@ temp/
 *.cache
 
 # ============================================================================
-# Testing
-# ============================================================================
-
-.coverage
-htmlcov/
-.tox/
-coverage.xml
-*.cover
-
-# ============================================================================
 # BREEZER Specific
 # ============================================================================
 
 # Backend runtime
 backend/.cache/
 backend/logs/
+backend/venv/
+backend/.venv/
+backend/__pycache__/
+backend/**/__pycache__/
+backend/*.pyc
+backend/.pytest_cache/
 
-# Extension builds
+# Extension builds & artifacts
 extension/out/
 extension/dist/
+extension/node_modules/
+extension/*.vsix
+*.vsix
+
+# IDE build artifacts (downloaded)
+VSCode-linux-x64/
+VSCode-win32-x64/
+VSCode-darwin-x64/
+VSCode-darwin-arm64/
+breezer-linux-extracted/
+breezer-windows-extracted/
+breezer-darwin-extracted/
+
+# Downloaded build artifacts (already covered above, but being explicit for BREEZER)
+breezer-ide-linux-*.tar.gz
+breezer-ide-windows-*.zip
+breezer-ide-darwin-*.tar.gz
 
 # Sandbox containers (shouldn't be committed)
 .sandbox/
+sandbox_workspaces/
+
+# Vector database & embeddings
+.qdrant/
+.chroma/
+embeddings/
+faiss_index/
+
+# LLM models (if downloaded locally)
+models/
+*.gguf
+*.bin
+
+# Local LLM model files
+mistral.gguf
+
+# Agent memory/state
+agent_memory/
+conversation_history/
+.agent_state/
 
 # Local configuration overrides
 config.local.yaml
 settings.local.json
+.env.local
+product.local.json
+
+# Telemetry/Analytics (disabled but just in case)
+telemetry/
+analytics/
+
+# Temporary IDE testing
+test-workspace/
+.test-files/
+
+# MCP (Model Context Protocol) server cache
+.mcp/
+mcp_cache/

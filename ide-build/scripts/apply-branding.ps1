@@ -37,8 +37,21 @@ Write-Host "Setting up Windows icons..." -ForegroundColor Yellow
 New-Item -ItemType Directory -Force -Path "$CodeOssDir\resources\win32" | Out-Null
 
 if (Test-Path "$LogosSource\breezer.ico") {
+    # Primary icon location (used by VS Code build system)
     Copy-Item "$LogosSource\breezer.ico" "$CodeOssDir\resources\win32\code.ico" -Force
-    Write-Host "  Copied breezer.ico" -ForegroundColor Green
+    Write-Host "  ✓ Copied to resources\win32\code.ico" -ForegroundColor Green
+    
+    # Additional icon locations for Electron packager
+    Copy-Item "$LogosSource\breezer.ico" "$CodeOssDir\resources\win32\app.ico" -Force
+    Write-Host "  ✓ Copied to resources\win32\app.ico" -ForegroundColor Green
+    
+    # Verify icon is valid
+    $iconSize = (Get-Item "$LogosSource\breezer.ico").Length
+    if ($iconSize -lt 1024) {
+        Write-Host "  ⚠️  Warning: Icon file is very small ($iconSize bytes) - may be corrupted" -ForegroundColor Yellow
+    } else {
+        Write-Host "  ✓ Icon validated ($iconSize bytes)" -ForegroundColor Green
+    }
     
     # Note: Windows tiles (150x150, 70x70) would need conversion from ICO to PNG
     # For now, the main .ico file contains multiple sizes and Windows will use appropriate one
@@ -106,10 +119,37 @@ MIT License - See LICENSE file
 "@ | Set-Content "$CodeOssDir\README_BREEZER.md"
 
 Write-Host ""
-Write-Host "BREEZER IDE branding applied successfully!" -ForegroundColor Green
+Write-Host "=== Verifying Icon Placement ===" -ForegroundColor Cyan
+
+# Verify all expected icon locations exist
+$iconLocations = @(
+    "$CodeOssDir\resources\win32\code.ico",
+    "$CodeOssDir\resources\win32\app.ico"
+)
+
+$allIconsPresent = $true
+foreach ($iconPath in $iconLocations) {
+    if (Test-Path $iconPath) {
+        $size = (Get-Item $iconPath).Length
+        Write-Host "✓ $iconPath ($size bytes)" -ForegroundColor Green
+    } else {
+        Write-Host "✗ MISSING: $iconPath" -ForegroundColor Red
+        $allIconsPresent = $false
+    }
+}
+
+if ($allIconsPresent) {
+    Write-Host ""
+    Write-Host "✅ BREEZER IDE branding applied successfully!" -ForegroundColor Green
+} else {
+    Write-Host ""
+    Write-Host "⚠️  BREEZER IDE branding applied with warnings" -ForegroundColor Yellow
+    Write-Host "   Some icon files are missing" -ForegroundColor Yellow
+}
+
 Write-Host ""
 Write-Host "Next steps:" -ForegroundColor Cyan
 Write-Host "1. cd $CodeOssDir" -ForegroundColor White
-Write-Host "2. yarn install" -ForegroundColor White
-Write-Host "3. yarn compile" -ForegroundColor White
-Write-Host "4. yarn gulp vscode-win32-x64" -ForegroundColor White
+Write-Host "2. npm ci" -ForegroundColor White
+Write-Host "3. npm run compile" -ForegroundColor White
+Write-Host "4. npm run gulp vscode-win32-x64" -ForegroundColor White

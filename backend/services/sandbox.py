@@ -14,8 +14,15 @@ from core.config import settings
 
 logger = logging.getLogger(__name__)
 
-# Docker client
-docker_client = docker.from_env()
+# Initialize Docker client from environment (supports host socket injection)
+# Wrap in try-except to allow backend to start even if Docker is unavailable
+try:
+    docker_client = docker.from_env()
+    logger.info("✅ Docker client initialized successfully")
+except Exception as e:
+    logger.warning(f"⚠️  Docker client unavailable: {e}")
+    logger.warning("Sandbox functionality will be disabled")
+    docker_client = None
 
 
 class SandboxExecutionError(Exception):
@@ -44,6 +51,9 @@ class Sandbox:
         """Start sandbox container"""
         if not settings.SANDBOX_ENABLED:
             raise SandboxExecutionError("Sandbox is disabled")
+        
+        if docker_client is None:
+            raise SandboxExecutionError("Docker client is not available. Sandbox functionality is disabled.")
         
         try:
             # Select base image based on language

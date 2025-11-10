@@ -45,8 +45,21 @@ fi
 echo "🪟 Setting up Windows icons..."
 mkdir -p "$CODE_OSS_DIR/resources/win32"
 if [ -f "$LOGOS_SOURCE/breezer.ico" ]; then
+    # Primary icon location (used by VS Code build system)
     cp "$LOGOS_SOURCE/breezer.ico" "$CODE_OSS_DIR/resources/win32/code.ico"
-    echo "✓ Copied Windows icon"
+    echo "✓ Copied to resources/win32/code.ico"
+    
+    # Additional icon locations for Electron packager
+    cp "$LOGOS_SOURCE/breezer.ico" "$CODE_OSS_DIR/resources/win32/app.ico"
+    echo "✓ Copied to resources/win32/app.ico"
+    
+    # Verify icon is valid
+    ICON_SIZE=$(stat -f%z "$LOGOS_SOURCE/breezer.ico" 2>/dev/null || stat -c%s "$LOGOS_SOURCE/breezer.ico" 2>/dev/null || echo "0")
+    if [ "$ICON_SIZE" -lt 1024 ]; then
+        echo "⚠️  Warning: Icon file is very small ($ICON_SIZE bytes) - may be corrupted"
+    else
+        echo "✓ Icon validated ($ICON_SIZE bytes)"
+    fi
 fi
 
 if [ -f "$LOGOS_SOURCE/breezer.ico" ]; then
@@ -129,10 +142,33 @@ MIT License - See LICENSE file
 © 2025 RICHDALE AI. All rights reserved.
 EOF
 
-echo "✅ BREEZER IDE branding applied successfully!"
+echo ""
+echo "=== Verifying Icon Placement ==="
+
+# Verify all expected icon locations exist
+ALL_ICONS_PRESENT=true
+for icon_path in "$CODE_OSS_DIR/resources/win32/code.ico" "$CODE_OSS_DIR/resources/win32/app.ico" "$CODE_OSS_DIR/resources/linux/code.png"; do
+    if [ -f "$icon_path" ]; then
+        ICON_SIZE=$(stat -f%z "$icon_path" 2>/dev/null || stat -c%s "$icon_path" 2>/dev/null || echo "0")
+        echo "✓ $icon_path ($ICON_SIZE bytes)"
+    else
+        echo "✗ MISSING: $icon_path"
+        ALL_ICONS_PRESENT=false
+    fi
+done
+
+if [ "$ALL_ICONS_PRESENT" = true ]; then
+    echo ""
+    echo "✅ BREEZER IDE branding applied successfully!"
+else
+    echo ""
+    echo "⚠️  BREEZER IDE branding applied with warnings"
+    echo "   Some icon files are missing"
+fi
+
 echo ""
 echo "Next steps:"
 echo "1. cd $CODE_OSS_DIR"
-echo "2. yarn install"
-echo "3. yarn compile"
-echo "4. yarn gulp vscode-<platform>-x64"
+echo "2. npm ci"
+echo "3. npm run compile"
+echo "4. npm run gulp vscode-linux-x64   # or vscode-win32-x64, vscode-darwin-x64"
