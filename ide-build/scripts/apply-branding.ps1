@@ -48,9 +48,9 @@ if (Test-Path "$LogosSource\breezer.ico") {
     # Verify icon is valid
     $iconSize = (Get-Item "$LogosSource\breezer.ico").Length
     if ($iconSize -lt 1024) {
-        Write-Host "  ⚠️  Warning: Icon file is very small ($iconSize bytes) - may be corrupted" -ForegroundColor Yellow
+        Write-Host "  ⚠️  Warning: Icon file is very small ($($iconSize) bytes) - may be corrupted" -ForegroundColor Yellow
     } else {
-        Write-Host "  ✓ Icon validated ($iconSize bytes)" -ForegroundColor Green
+        Write-Host "  ✓ Icon validated ($($iconSize) bytes)" -ForegroundColor Green
     }
     
     # Note: Windows tiles (150x150, 70x70) would need conversion from ICO to PNG
@@ -111,8 +111,6 @@ BREEZER is a next-generation IDE built on Code-OSS with integrated AI agents for
 
 ## License
 
-MIT License - See LICENSE file
-
 ---
 
 © 2025 RICHDALE AI. All rights reserved.
@@ -131,7 +129,7 @@ $allIconsPresent = $true
 foreach ($iconPath in $iconLocations) {
     if (Test-Path $iconPath) {
         $size = (Get-Item $iconPath).Length
-        Write-Host "✓ $iconPath ($size bytes)" -ForegroundColor Green
+        Write-Host "✓ $iconPath ($($size)) bytes" -ForegroundColor Green
     } else {
         Write-Host "✗ MISSING: $iconPath" -ForegroundColor Red
         $allIconsPresent = $false
