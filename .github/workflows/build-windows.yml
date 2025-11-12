@@ -153,7 +153,7 @@ jobs:
             $availableExe = Get-ChildItem -Path $packagePath -Filter *.exe -ErrorAction SilentlyContinue
             if ($availableExe.Count -eq 1) {
               $exePath = $availableExe[0].FullName
-              Write-Warning "Expected executable names not found; using detected file $($availableExe[0].Name)" -ForegroundColor Yellow
+              Write-Warning "Expected executable names not found; using detected file $($availableExe[0].Name)"
             } elseif ($availableExe.Count -gt 1) {
               $exeList = ($availableExe | Select-Object -ExpandProperty Name) -join ', '
               Write-Error "Multiple executables found but none matched expected names: $exeList"
