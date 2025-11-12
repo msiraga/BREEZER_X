@@ -102,9 +102,26 @@ jobs:
         run: |
           Write-Host "=== Validating BREEZER icon in Windows build ===" -ForegroundColor Cyan
           
-          $packagePath = "VSCode-win32-x64"
-          $exePath = "$packagePath\Code.exe"
+          $packageCandidates = @(
+            "VSCode-win32-x64",
+            "code-oss\VSCode-win32-x64",
+            "code-oss\.build\win32-x64\VSCode-win32-x64"
+          )
+          $packagePath = $null
+          foreach ($candidate in $packageCandidates) {
+            if (Test-Path $candidate) {
+              $packagePath = $candidate
+              break
+            }
+          }
           
+          if (-not $packagePath) {
+            Write-Error "Package directory not found in expected locations"
+            exit 1
+          }
+          Write-Host "Detected package directory: $packagePath" -ForegroundColor Yellow
+          
+          $exePath = Join-Path $packagePath "Code.exe"
           if (!(Test-Path $exePath)) {
             Write-Error "Code.exe not found at $exePath"
             exit 1

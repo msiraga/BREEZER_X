@@ -114,7 +114,7 @@ Edit `.env`:
 # Primary LLM (DeepSeek)
 DEEPSEEK_API_KEY=sk-your-deepseek-key
 
-# Optional: Add more providers later
+# Optional: Add more providers later (see Local LLM section below)
 OPENAI_API_KEY=
 ANTHROPIC_API_KEY=
 
@@ -144,6 +144,23 @@ Edit `backend/config/agents.yaml` to customize agent behavior.
 curl -X POST http://localhost:8000/api/task \
   -H "Content-Type: application/json" \
   -d '{"task": "Refactor this function", "context": {...}}'
+```
+
+### Local LLM (llama.cpp) Service
+
+```powershell
+# Rebuild the llama.cpp container after updating Dockerfile or mistral.gguf
+docker-compose up -d --build llamafile
+
+# Follow logs to ensure the model loads correctly
+docker-compose logs -f llamafile
+
+# Test from host
+$body = @{ model = "mistral-7b-instruct"; messages = @(@{ role = "user"; content = "Hello" }); max_tokens = 20 } | ConvertTo-Json
+Invoke-RestMethod -Uri "http://localhost:8080/v1/chat/completions" -Method Post -ContentType "application/json" -Body $body
+
+# Test from backend container
+docker-compose exec backend python -c "import requests; print(requests.get('http://llamafile:8080/v1/models').json())"
 ```
 
 ## Building for Production

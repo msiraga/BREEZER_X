@@ -1,0 +1,27 @@
+FROM ubuntu:22.04
+
+RUN apt-get update && \
+    apt-get install -y --no-install-recommends \
+        build-essential \
+        git \
+        cmake \
+        libcurl4-openssl-dev \
+        ca-certificates && \
+    update-ca-certificates && \
+    rm -rf /var/lib/apt/lists/*
+
+WORKDIR /opt
+
+RUN git clone --depth 1 https://github.com/ggerganov/llama.cpp && \
+    cmake -S llama.cpp -B llama.cpp/build -DCMAKE_BUILD_TYPE=Release \
+        -DLLAMA_BUILD_TESTS=OFF -DLLAMA_BUILD_EXAMPLES=OFF \
+        -DLLAMA_BUILD_SERVER=ON && \
+    cmake --build llama.cpp/build --config Release -j "$(nproc)"
+
+WORKDIR /opt/llama.cpp
+
+COPY mistral.gguf /models/mistral.gguf
+
+EXPOSE 8080
+
+CMD ["./build/bin/llama-server", "-m", "/models/mistral.gguf", "--host", "0.0.0.0", "--port", "8080"]
