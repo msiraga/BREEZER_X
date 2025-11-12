@@ -121,14 +121,50 @@ jobs:
           }
           Write-Host "Detected package directory: $packagePath" -ForegroundColor Yellow
           
-          $exePath = Join-Path $packagePath "Code.exe"
-          if (!(Test-Path $exePath)) {
-            Write-Error "Code.exe not found at $exePath"
-            exit 1
+          $productJsonPath = "code-oss\product.json"
+          $exeCandidates = @("Code.exe")
+          if (Test-Path $productJsonPath) {
+            try {
+              $product = Get-Content $productJsonPath -Raw | ConvertFrom-Json
+              if ($product.applicationName) {
+                $exeCandidates += "$(($product.applicationName).Trim()).exe"
+              }
+              if ($product.win32NameVersion) {
+                $exeCandidates += "$(($product.win32NameVersion).Trim()).exe"
+              }
+            } catch {
+              Write-Warning "Unable to parse product.json: $($_.Exception.Message)"
+            }
+          } else {
+            Write-Warning "product.json not found at $productJsonPath"
+          }
+
+          $exePath = $null
+          foreach ($exeName in ($exeCandidates | Select-Object -Unique)) {
+            $candidatePath = Join-Path $packagePath $exeName
+            if (Test-Path $candidatePath) {
+              $exePath = $candidatePath
+              Write-Host "SUCCESS: Found executable $exeName" -ForegroundColor Green
+              break
+            }
+          }
+
+          if (-not $exePath) {
+            $availableExe = Get-ChildItem -Path $packagePath -Filter *.exe -ErrorAction SilentlyContinue
+            if ($availableExe.Count -eq 1) {
+              $exePath = $availableExe[0].FullName
+              Write-Warning "Expected executable names not found; using detected file $($availableExe[0].Name)" -ForegroundColor Yellow
+            } elseif ($availableExe.Count -gt 1) {
+              $exeList = ($availableExe | Select-Object -ExpandProperty Name) -join ', '
+              Write-Error "Multiple executables found but none matched expected names: $exeList"
+              exit 1
+            } else {
+              Write-Error "No executable (.exe) files found in package directory"
+              exit 1
+            }
           }
           
-          Write-Host "SUCCESS: Code.exe found" -ForegroundColor Green
-          
+          Write-Host "Executable path: $exePath" -ForegroundColor Cyan
           $iconResources = @(
             "$packagePath\resources\app\resources\win32\code.ico",
             "$packagePath\resources\app\resources\win32\app.ico"

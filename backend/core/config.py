@@ -59,15 +59,15 @@ class Settings(BaseSettings):
     QDRANT_API_KEY: str = ""
     
     # Model Configuration (DeepSeek with reasoning)
-    MODEL_IMPLEMENTATION: str = "deepseek/deepseek-chat"
-    MODEL_REVIEW: str = "deepseek/deepseek-chat"
+    MODEL_IMPLEMENTATION: str = "deepseek/deepseek-reasoner"
+    MODEL_REVIEW: str = "deepseek/deepseek-reasoner"
     MODEL_ARCHITECT: str = "deepseek/deepseek-reasoner"
-    MODEL_QA: str = "deepseek/deepseek-chat"
+    MODEL_QA: str = "deepseek/deepseek-reasoner"
     MODEL_DEBUG: str = "deepseek/deepseek-reasoner"
-    MODEL_DOCUMENTATION: str = "deepseek/deepseek-chat"
-    MODEL_REFACTORING: str = "deepseek/deepseek-chat"
-    MODEL_SECURITY: str = "deepseek/deepseek-chat"
-    MODEL_DEVOPS: str = "deepseek/deepseek-chat"
+    MODEL_DOCUMENTATION: str = "deepseek/deepseek-reasoner"
+    MODEL_REFACTORING: str = "deepseek/deepseek-reasoner"
+    MODEL_SECURITY: str = "deepseek/deepseek-reasoner"
+    MODEL_DEVOPS: str = "deepseek/deepseek-reasoner"
     MODEL_FALLBACK: str = "llamafile/mistral-7b-instruct"
     
     # Embeddings
