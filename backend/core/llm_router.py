@@ -81,7 +81,8 @@ class LLMRouter:
         Returns:
             Completion response
         """
-        model = self.model_map.get(agent_type, settings.MODEL_FALLBACK)
+        override_model = kwargs.pop("override_model", None)
+        model = override_model or self.model_map.get(agent_type, settings.MODEL_FALLBACK)
         max_tokens = max_tokens or settings.MAX_OUTPUT_TOKENS
         
         try:

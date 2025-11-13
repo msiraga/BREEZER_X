@@ -3,7 +3,7 @@ Configuration management using Pydantic Settings
 """
 
 from pydantic_settings import BaseSettings
-from typing import List
+from typing import List, Dict
 import os
 
 
@@ -58,16 +58,17 @@ class Settings(BaseSettings):
     QDRANT_PORT: int = 6333
     QDRANT_API_KEY: str = ""
     
-    # Model Configuration (DeepSeek with reasoning)
+    # Model Configuration (DeepSeek mix)
     MODEL_IMPLEMENTATION: str = "deepseek/deepseek-reasoner"
     MODEL_REVIEW: str = "deepseek/deepseek-reasoner"
     MODEL_ARCHITECT: str = "deepseek/deepseek-reasoner"
     MODEL_QA: str = "deepseek/deepseek-reasoner"
     MODEL_DEBUG: str = "deepseek/deepseek-reasoner"
-    MODEL_DOCUMENTATION: str = "deepseek/deepseek-reasoner"
+    MODEL_DOCUMENTATION: str = "deepseek/deepseek-chat"
     MODEL_REFACTORING: str = "deepseek/deepseek-reasoner"
     MODEL_SECURITY: str = "deepseek/deepseek-reasoner"
     MODEL_DEVOPS: str = "deepseek/deepseek-reasoner"
+    MODEL_TOOL_CALL: str = "deepseek/deepseek-chat"
     MODEL_FALLBACK: str = "llamafile/mistral-7b-instruct"
     
     # Embeddings
@@ -84,6 +85,22 @@ class Settings(BaseSettings):
     SANDBOX_CPU_LIMIT: int = 2
     SANDBOX_NETWORK_ISOLATED: bool = True
     SANDBOX_READ_ONLY_ROOT: bool = True
+
+    # Tooling safety
+    TOOL_FILE_ROOT: str = ""
+    TOOL_REQUIRE_CONFIRMATION: bool = True
+    TOOL_TERMINAL_WHITELIST: List[str] = [
+        "npm_test",
+        "pytest",
+        "npm_run_build"
+    ]
+    TOOL_TERMINAL_COMMAND_MAP: Dict[str, str] = {
+        "npm_test": "npm test",
+        "pytest": "pytest",
+        "npm_run_build": "npm run build"
+    }
+    TOOL_MAX_FILE_SIZE_BYTES: int = 1_000_000
+    TOOL_WEB_LOOKUP_ENABLED: bool = False
     
     # Context
     MAX_CONTEXT_TOKENS: int = 128000

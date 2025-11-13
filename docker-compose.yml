@@ -58,8 +58,8 @@ services:
   # Agent Orchestrator Backend
   backend:
     build:
-      context: .
-      dockerfile: backend/Dockerfile
+      context: ./backend
+      dockerfile: Dockerfile
     container_name: breezer-backend
     env_file:
       - .env

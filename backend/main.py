@@ -11,7 +11,7 @@ from fastapi.responses import JSONResponse
 from prometheus_client import make_asgi_app
 import logging
 
-from api.routes import agent, health, tasks, context
+from api.routes import agent, health, tasks, context, tools
 from core.config import settings
 from core.database import init_db
 from core.embeddings import init_embeddings
@@ -76,6 +76,7 @@ app.include_router(health.router, prefix="/health", tags=["health"])
 app.include_router(agent.router, prefix="/api/agent", tags=["agent"])
 app.include_router(tasks.router, prefix="/api/tasks", tags=["tasks"])
 app.include_router(context.router, prefix="/api/context", tags=["context"])
+app.include_router(tools.router, prefix="/api/tools", tags=["tools"])
 
 
 @app.exception_handler(Exception)

@@ -2,7 +2,7 @@
 Agent Orchestrator - Routes and coordinates multiple agents
 """
 
-from typing import Dict, List, Optional
+from typing import Dict, List, Optional, Any
 from enum import Enum
 import logging
 
@@ -169,6 +169,21 @@ class AgentOrchestrator:
                 context.additional_context[f"{agent_name}_response"] = response.content
         
         return responses
+
+    async def continue_with_tool(
+        self,
+        agent_name: str,
+        conversation_state: Dict[str, Any],
+        tool_results: List[Dict[str, Any]]
+    ) -> AgentResponse:
+        if agent_name not in self.agents:
+            raise ValueError(f"Unknown agent: {agent_name}")
+
+        agent = self.agents[agent_name]
+        try:
+            return await agent.continue_with_tool(conversation_state, tool_results)
+        except NotImplementedError as exc:
+            raise ValueError(f"Agent '{agent_name}' does not support tool continuation") from exc
 
 
 # Global orchestrator instance

@@ -30,6 +30,9 @@ class AgentResponse(BaseModel):
     metadata: Dict[str, Any] = {}
     actions: List[Dict[str, Any]] = []  # Suggested actions
     confidence: float = 1.0
+    requires_tool: bool = False
+    tool_calls: List[Dict[str, Any]] = []
+    conversation_state: Dict[str, Any] = {}
 
 
 class BaseAgent(ABC):
@@ -56,8 +59,9 @@ class BaseAgent(ABC):
         self,
         messages: List[Dict[str, str]],
         temperature: float = 0.7,
+        raw: bool = False,
         **kwargs
-    ) -> str:
+    ) -> Any:
         """
         Get LLM completion for this agent
         
@@ -76,7 +80,12 @@ class BaseAgent(ABC):
             **kwargs
         )
         
-        return response.choices[0].message.content
+        if raw:
+            return response
+
+        message = response.choices[0].message
+        # OpenAI-compatible responses may omit content when issuing tool calls
+        return message.get("content") or ""
     
     def build_system_prompt(self) -> str:
         """Build system prompt for this agent"""
@@ -108,3 +117,11 @@ class BaseAgent(ABC):
             f"Success: {response.success}, "
             f"Confidence: {response.confidence}"
         )
+
+    async def continue_with_tool(
+        self,
+        conversation_state: Dict[str, Any],
+        tool_results: List[Dict[str, Any]]
+    ) -> AgentResponse:
+        """Continue conversation after receiving tool output."""
+        raise NotImplementedError("Tool continuation not implemented for this agent")

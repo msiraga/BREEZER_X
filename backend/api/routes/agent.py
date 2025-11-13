@@ -11,6 +11,7 @@ import asyncio
 
 from agents.orchestrator import orchestrator
 from agents.base import AgentContext, AgentResponse
+from core.tool_state import tool_state_manager
 
 router = APIRouter()
 
@@ -34,6 +35,8 @@ class AgentResponseModel(BaseModel):
     metadata: Dict[str, Any]
     actions: List[Dict[str, Any]]
     confidence: float
+    requires_tool: bool = False
+    tool_calls: List[Dict[str, Any]] = []
 
 
 @router.post("/query", response_model=AgentResponseModel)
@@ -64,13 +67,26 @@ async def process_query(request: AgentRequest):
         # Process with orchestrator
         response = await orchestrator.process_request(context)
         
+        if response.requires_tool and response.conversation_state:
+            await tool_state_manager.set_state(
+                request_id,
+                {
+                    "agent": response.conversation_state.get("agent"),
+                    "conversation_state": response.conversation_state
+                }
+            )
+        else:
+            await tool_state_manager.clear_state(request_id)
+
         return AgentResponseModel(
             request_id=request_id,
             success=response.success,
             content=response.content,
             metadata=response.metadata,
             actions=response.actions,
-            confidence=response.confidence
+            confidence=response.confidence,
+            requires_tool=response.requires_tool,
+            tool_calls=response.tool_calls
         )
         
     except Exception as e:
@@ -163,6 +179,62 @@ async def process_multi_agent(
         
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
+
+
+class ToolResultItem(BaseModel):
+    call_id: str
+    name: str
+    output: str
+
+
+class ToolResultRequest(BaseModel):
+    request_id: str
+    tool_results: List[ToolResultItem]
+
+
+@router.post("/tool-result", response_model=AgentResponseModel)
+async def submit_tool_result(request: ToolResultRequest):
+    state = await tool_state_manager.get_state(request.request_id)
+    if not state:
+        raise HTTPException(status_code=404, detail="No pending tool call for request")
+
+    agent_name = state.get("agent")
+    conversation_state = state.get("conversation_state")
+    if not agent_name or not conversation_state:
+        await tool_state_manager.clear_state(request.request_id)
+        raise HTTPException(status_code=500, detail="Incomplete conversation state")
+
+    try:
+        response = await orchestrator.continue_with_tool(
+            agent_name,
+            conversation_state,
+            [item.dict() for item in request.tool_results]
+        )
+    except Exception as exc:  # pylint: disable=broad-except
+        await tool_state_manager.clear_state(request.request_id)
+        raise HTTPException(status_code=500, detail=str(exc))
+
+    if response.requires_tool and response.conversation_state:
+        await tool_state_manager.set_state(
+            request.request_id,
+            {
+                "agent": response.conversation_state.get("agent"),
+                "conversation_state": response.conversation_state
+            }
+        )
+    else:
+        await tool_state_manager.clear_state(request.request_id)
+
+    return AgentResponseModel(
+        request_id=request.request_id,
+        success=response.success,
+        content=response.content,
+        metadata=response.metadata,
+        actions=response.actions,
+        confidence=response.confidence,
+        requires_tool=response.requires_tool,
+        tool_calls=response.tool_calls
+    )
 
 
 @router.get("/agents")
